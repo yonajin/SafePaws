@@ -53,6 +53,15 @@ It demonstrates a practical implementation of **CRUD operations** in a real-worl
    ```bash
    git clone https://github.com/yourusername/SafePaws.git
 2. Move the folder to your XAMPP `htdocs` directory and run Apache/MySQL.
+3. Open XAMPP Control Panel and start Apache and MySQL.
+4. Import the database:
+   • Open phpMyAdmin
+   • Create a new database (e.g. safepaws_db)
+   • Import the provided .sql file located in the project folder
+5. Access the system in your browser:
+   ```bash
+   http://localhost/SafePaws/
+6. Login using the default admin credentials (if provided in your documentation).
 
 ## 📜 License
 This project was created for **educational purposes only** as part of a university coursework requirement.
