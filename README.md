@@ -9,7 +9,7 @@ This project was created as a **Capstone Project / Final Requirement** for the *
 
 ## 👩‍💻 Developers
 - **Fiona Gene U. Basa**  
-- **Kim Yu**  
+- **Kimberly D. Yu**  
 - **Alyza Mae Salango**
 
 ---
