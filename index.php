@@ -178,7 +178,21 @@
   <button class="btn btn-outline-dark mt-4">View More</button>
 </section>
 
-
+<!-- Donation Section -->
+<section class="container text-center py-5">
+  <div class="p-5 rounded-4 shadow-sm" style="background-color: #fff6f1; margin-bottom: 20px;">
+    <h2 class="section-title">Support Our Mission</h2>
+    <p class="mx-auto" style="max-width:700px;">
+      Your donation plays a vital role in sustaining SafePaws’ rescue, rehabilitation, and adoption programs.
+      Every contribution directly funds essential veterinary care, shelter maintenance, and community outreach
+      initiatives that promote responsible pet ownership. With your support, we can continue improving the
+      welfare of animals and creating lasting, positive change within our communities.
+    </p>
+    <button class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
+      Donate Now
+    </button>
+  </div>
+</section>
 
 
 <!-- About Section -->
