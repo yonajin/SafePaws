@@ -92,6 +92,23 @@
       color: #333;
       margin-top: 40px;
     }
+
+    .square {
+  background-color: #5a5755ff; /* or bg-secondary if using Bootstrap */
+  aspect-ratio: 1 / 1;       /* makes width = height */
+  width: 100%;               /* fills the column width */
+  border-radius: 8px;    
+  margin-bottom: 8px;    /* optional, rounded corners */
+}
+
+.pet-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;     /* keeps the image perfectly square */
+  object-fit: cover;       /* crops and fills square nicely */
+  border-radius: 8px;      /* optional rounded corners */
+}
+
+
   </style>
 </head>
 <body>
@@ -122,17 +139,47 @@
 
 <!-- Meet Our Pets -->
 <section class="container text-center py-5">
-  <h2 class="section-title">Meet Our Pets</h2>
-  <div class="row g-3">
-    <div class="col-md-4"><div class="bg-secondary" style="height:200px;"></div></div>
-    <div class="col-md-4"><div class="bg-secondary" style="height:200px;"></div></div>
-    <div class="col-md-4"><div class="bg-secondary" style="height:200px;"></div></div>
-    <div class="col-md-4"><div class="bg-secondary" style="height:200px;"></div></div>
-    <div class="col-md-4"><div class="bg-secondary" style="height:200px;"></div></div>
-    <div class="col-md-4"><div class="bg-secondary" style="height:200px;"></div></div>
+  <h2 class="section-title mb-4">Meet Our Pets</h2>
+  <div class="row g-4">
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/cat1.jpg" class="pet-img" alt="Rigby">
+      <p style="font-size: 20px;">Rigby</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/cat2.jpg" class="pet-img" alt="Nigcat">
+      <p style="font-size: 20px;">Nigcat</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/cat3.jpg" class="pet-img" alt="Chipoy">
+      <p style="font-size: 20px;">Chipoy</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/cat4.jpg" class="pet-img" alt="Wowo">
+      <p style="font-size: 20px;">Wowo</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/dog1.jpg" class="pet-img" alt="Bapi">
+      <p style="font-size: 20px;">Bapi</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/dog2.jpg" class="pet-img" alt="Jimbo">
+      <p style="font-size: 20px;">Jimbo</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/dog3.jpg" class="pet-img" alt="Mimi">
+      <p style="font-size: 20px;">Mimi</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="assets/dog4.jpg" class="pet-img" alt="Bogart">
+      <p style="font-size: 20px;">Bogart</p>
+    </div>
+    <!-- add more as needed -->
   </div>
   <button class="btn btn-outline-dark mt-4">View More</button>
 </section>
+
+
+
 
 <!-- About Section -->
 <section class="container py-5 border-top border-bottom">
