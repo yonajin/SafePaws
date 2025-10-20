@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SafePaws - Landing Page</title>
+  <title>SafePaws - About Page</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 
@@ -103,16 +103,9 @@
 
 .pet-img {
   width: 100%;
-  border-radius: 10px;
   aspect-ratio: 1 / 1;     /* keeps the image perfectly square */
-  object-fit: cover; 
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-.pet-img:hover {
-  transform: scale(1.05); /* zoom in slightly */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* add subtle shadow */
+  object-fit: cover;       /* crops and fills square nicely */
+  border-radius: 8px;      /* optional rounded corners */
 }
 
 
@@ -136,78 +129,6 @@
     </ul>
   </div>
 </nav>
-
-<!-- Hero Section -->
-<section class="hero">
-  <h1>Adopt Love,<br>Save Lives</h1>
-  <p>Find Your New Best Friend at SafePaws</p>
-  <button class="btn btn-lg mt-2" onclick="window.location.href='adopt.php'">
-  Find a Pet
-</button>
-
-</section>
-
-<!-- Meet Our Pets -->
-<section class="container text-center py-5">
-  <h2 class="section-title mb-4">Meet Our Pets</h2>
-  <div class="row g-4">
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat1.jpg" class="pet-img" alt="Rigby">
-      <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat2.jpg" class="pet-img" alt="Nigcat">
-      <p style="font-size: 20px; margin-top: 10px;">Nigcat</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat3.jpg" class="pet-img" alt="Chipoy">
-      <p style="font-size: 20px; margin-top: 10px;">Chipoy</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat4.jpg" class="pet-img" alt="Wowo">
-      <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
-    </div>
-
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/dog1.jpg" class="pet-img" alt="Bapi">
-  </a>
-  <p style="font-size: 20px;">Bapi</p>
-   </div>
-   
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/dog2.jpg" class="pet-img" alt="Jimbo">
-      <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/dog3.jpg" class="pet-img" alt="Mimi">
-      <p style="font-size: 20px; margin-top: 10px;">Mimi</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/dog4.jpg" class="pet-img" alt="Bogart">
-      <p style="font-size: 20px; margin-top: 10px;">Bogart</p>
-    </div>
-    <!-- add more as needed -->
-  </div>
- <a href="adopt.php" class="btn btn-outline-dark mt-4">View More</a>
-</section>
-
-<!-- Donation Section -->
-<section class="container text-center py-5">
-  <div class="p-5 rounded-4 shadow-sm" style="background-color: #fff6f1; margin-bottom: 20px;">
-    <h2 class="section-title">Support Our Mission</h2>
-    <p class="mx-auto" style="max-width:700px;">
-      Your donation plays a vital role in sustaining SafePaws’ rescue, rehabilitation, and adoption programs.
-      Every contribution directly funds essential veterinary care, shelter maintenance, and community outreach
-      initiatives that promote responsible pet ownership. With your support, we can continue improving the
-      welfare of animals and creating lasting, positive change within our communities.
-    </p>
-    <button class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
-      Donate Now
-    </button>
-  </div>
-</section>
-
 
 <!-- About Section -->
 <section class="container py-5 border-top border-bottom">
