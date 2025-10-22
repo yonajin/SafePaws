@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SafePaws - Adoption Page</title>
+  <title>SafePaws - Landing Page</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 
@@ -43,7 +43,7 @@
 }
     
 .hero {
-  background-image: url("assets/dogcat.webp");
+  background-image: url('../assets/images/dogcat.webp');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -128,92 +128,69 @@
   </button>
   <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
+      <li class="nav-item"><a class="nav-link" href='about.php'>About Us</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Donations</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Adopt Now</a></li>
+      <li class="nav-item"><a class="nav-link" href="adopt.php">Adopt Now</a></li>
     </ul>
   </div>
 </nav>
 
-<!-- Meet Our Pets -->
-<section class="container text-center py-5">
-  <h2 class="section-title mb-4">Meet Our Pets</h2>
-
-  <!-- Filter Buttons -->
-  <div class="mb-4">
-    <button class="btn btn-outline-dark active filter-btn" data-filter="all">All</button>
-    <button class="btn btn-outline-dark filter-btn" data-filter="cat">Cats</button>
-    <button class="btn btn-outline-dark filter-btn" data-filter="dog">Dogs</button>
-  </div>
-
-  <div class="row g-4" id="pets-container">
-    <!-- Cats -->
-    <div class="col-md-3 col-sm-6 pet-item cat">
-      <img src="assets/cat1.jpg" class="pet-img" alt="Rigby">
-      <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
-    </div>
-    <div class="col-md-3 col-sm-6 pet-item cat">
-      <img src="assets/cat2.jpg" class="pet-img" alt="Nigcat">
-      <p style="font-size: 20px; margin-top: 10px;">Nigcat</p>
-    </div>
-    <div class="col-md-3 col-sm-6 pet-item cat">
-      <img src="assets/cat3.jpg" class="pet-img" alt="Chipoy">
-      <p style="font-size: 20px; margin-top: 10px;">Chipoy</p>
-    </div>
-    <div class="col-md-3 col-sm-6 pet-item cat">
-      <img src="assets/cat4.jpg" class="pet-img" alt="Wowo">
-      <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
-    </div>
-
-    <!-- Dogs -->
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/dog1.jpg" class="pet-img" alt="Bapi">
-  </a>
-  <p style="font-size: 20px;">Bapi</p>
-   </div>
-
-    <div class="col-md-3 col-sm-6 pet-item dog">
-      <img src="assets/dog2.jpg" class="pet-img" alt="Jimbo">
-      <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
-    </div>
-    <div class="col-md-3 col-sm-6 pet-item dog">
-      <img src="assets/dog3.jpg" class="pet-img" alt="Mimi">
-      <p style="font-size: 20px; margin-top: 10px;">Mimi</p>
-    </div>
-    <div class="col-md-3 col-sm-6 pet-item dog">
-      <img src="assets/dog4.jpg" class="pet-img" alt="Bogart">
-      <p style="font-size: 20px; margin-top: 10px;">Bogart</p>
-    </div>
-  </div>
+<!-- Hero Section -->
+<section class="hero">
+  <h1>Adopt Love,<br>Save Lives</h1>
+  <p>Find Your New Best Friend at SafePaws</p>
+  <button class="btn btn-lg mt-2" onclick="window.location.href='adopt.php'">
+  Find a Pet
+</button>
 
 </section>
 
-<!-- JavaScript Filter Function -->
-<script>
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const petItems = document.querySelectorAll('.pet-item');
+<!-- Meet Our Pets -->
+<section class="container text-center py-5">
+  <h2 class="section-title mb-4">Meet Our Pets</h2>
+  <div class="row g-4">
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/cat1.jpg" class="pet-img" alt="Rigby">
+      <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/cat2.jpg" class="pet-img" alt="Nigcat">
+      <p style="font-size: 20px; margin-top: 10px;">Nigcat</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/cat3.jpg" class="pet-img" alt="Chipoy">
+      <p style="font-size: 20px; margin-top: 10px;">Chipoy</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/cat4.jpg" class="pet-img" alt="Wowo">
+      <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
+    </div>
 
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Remove active state from all buttons
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      const filter = button.getAttribute('data-filter');
-      petItems.forEach(item => {
-        if (filter === 'all' || item.classList.contains(filter)) {
-          item.style.display = 'block';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    });
-  });
-</script>
-
+    <div class="col-md-3 col-sm-6 pet-item">
+  <a href="pet_details.php">
+    <img src="../assets/images/dog1.jpg" class="pet-img" alt="Bapi">
+  </a>
+  <p style="font-size: 20px;">Bapi</p>
+   </div>
+   
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
+      <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/dog3.jpg" class="pet-img" alt="Mimi">
+      <p style="font-size: 20px; margin-top: 10px;">Mimi</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <img src="../assets/images/dog4.jpg" class="pet-img" alt="Bogart">
+      <p style="font-size: 20px; margin-top: 10px;">Bogart</p>
+    </div>
+    <!-- add more as needed -->
+  </div>
+ <a href="adopt.php" class="btn btn-outline-dark mt-4">View More</a>
+</section>
 
 <!-- Donation Section -->
 <section class="container text-center py-5">
