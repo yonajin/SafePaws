@@ -95,7 +95,7 @@ if (isset($_POST['add_pet'])) {
     tbody tr:nth-child(even) { background-color: #f9f9f9; }
     tbody tr:hover { background-color: #f1edea; transition: 0.2s; }
 
-    .btn-add { background-color: #A9745B; color: white; }
+    .btn-add { background-color: #A9745B; color: white; margin-top: -10px;}
     .btn-add:hover { background-color: #8e5f47; }
 
     /* --- Profile Dropdown --- */
@@ -118,7 +118,9 @@ if (isset($_POST['add_pet'])) {
       <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
       <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
       <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
-      <a href="logout.php" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+      <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        <i class="bi bi-box-arrow-right me-2"></i> Logout
+      </a>
     </nav>
   </div>
 
@@ -129,56 +131,59 @@ if (isset($_POST['add_pet'])) {
       <a href="admin_profile.php"><i class="bi bi-person"></i> View Profile</a>
       <a href="settings.php"><i class="bi bi-gear"></i> Settings</a>
       <hr class="m-0">
-      <a href="logout.php" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
   </div>
 
   <!-- Main Content -->
   <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="fw-bold" style="color:#A9745B;">🐾 Manage Pets</h3>
-      <button class="btn btn-add" id="openAddPet"><i class="bi bi-plus-circle"></i> Add Pet</button>
+      <h3 class="fw-bold" style="color:#A9745B; margin:0;">🐾 Manage Pets</h3>
+      <button class="btn btn-add px-3 py-2" id="openAddPet"><i class="bi bi-plus-circle me-1"></i> Add Pet</button>
     </div>
 
-    <div class="table-responsive shadow-sm bg-white rounded p-3">
+    <div class="table-responsive shadow-sm bg-white rounded p-3 mt-2">
       <table class="table align-middle">
         <thead>
           <tr>
             <th>ID</th>
             <th>Photo</th>
             <th>Name</th>
-            <th>Type</th>
+            <th>Classification</th>
             <th>Breed</th>
             <th>Age</th>
             <th>Gender</th>
-            <th>Status</th>
-            <th>Date Added</th>
+            <th>Adoption Status</th>
+            <th>Date Sheltered</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php
-          $result = mysqli_query($conn, "SELECT * FROM pets ORDER BY date_added DESC");
+          $result = mysqli_query($conn, "SELECT * FROM pets ORDER BY date_sheltered DESC");
           if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
               echo "<tr>
-                      <td>{$row['id']}</td>
-                      <td><img src='uploads/{$row['image']}' class='pet-thumb'></td>
+                      <td>{$row['pet_id']}</td>
+                      <td><img src='uploads/{$row['image_url']}' class='pet-thumb'></td>
                       <td>{$row['name']}</td>
-                      <td>{$row['type']}</td>
+                      <td>{$row['classification']}</td>
                       <td>{$row['breed']}</td>
                       <td>{$row['age']}</td>
                       <td>{$row['gender']}</td>
-                      <td><span class='badge bg-".($row['status']=='Available'?'success':($row['status']=='Adopted'?'secondary':'warning'))."'>{$row['status']}</span></td>
-                      <td>{$row['date_added']}</td>
+                      <td><span class='badge bg-".(
+                          $row['adoption_status']=='Available' ? 'success' : (
+                          $row['adoption_status']=='Adopted' ? 'secondary' : 'warning')
+                        )."'>{$row['adoption_status']}</span></td>
+                      <td>{$row['date_sheltered']}</td>
                       <td>
-                        <a href='edit_pet.php?id={$row['id']}' class='btn btn-sm btn-warning'><i class='bi bi-pencil'></i></a>
-                        <a href='delete_pet.php?id={$row['id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Delete this pet?\")'><i class='bi bi-trash'></i></a>
+                        <a href='edit_pet.php?id={$row['pet_id']}' class='btn btn-sm btn-warning'><i class='bi bi-pencil'></i></a>
+                        <a href='delete_pet.php?id={$row['pet_id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Delete this pet?\")'><i class='bi bi-trash'></i></a>
                       </td>
                     </tr>";
             }
           } else {
-            echo "<tr><td colspan='10'>No pets found.</td></tr>";
+            echo "<tr><td colspan='10' class='text-center'>No pets found.</td></tr>";
           }
           ?>
         </tbody>
@@ -197,18 +202,57 @@ if (isset($_POST['add_pet'])) {
         <form method="POST" enctype="multipart/form-data">
           <div class="modal-body bg-light">
             <div class="row g-3">
-              <div class="col-md-6"><label class="form-label fw-semibold">Pet Name</label><input type="text" name="name" class="form-control" required></div>
-              <div class="col-md-6"><label class="form-label fw-semibold">Type</label><input type="text" name="type" class="form-control" placeholder="Dog, Cat, etc." required></div>
-              <div class="col-md-6"><label class="form-label fw-semibold">Breed</label><input type="text" name="breed" class="form-control"></div>
-              <div class="col-md-6"><label class="form-label fw-semibold">Age</label><input type="text" name="age" class="form-control" placeholder="e.g. 2 years"></div>
-              <div class="col-md-6"><label class="form-label fw-semibold">Gender</label>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Pet Name</label>
+                <input type="text" name="name" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Classification</label>
+                <select name="classification" class="form-select" required>
+                  <option value="Dog">Dog</option>
+                  <option value="Cat">Cat</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Breed</label>
+                <input type="text" name="breed" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Age</label>
+                <input type="text" name="age" class="form-control" placeholder="e.g. 2 years">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Gender</label>
                 <select name="gender" class="form-select"><option>Male</option><option>Female</option></select>
               </div>
-              <div class="col-md-6"><label class="form-label fw-semibold">Status</label>
-                <select name="status" class="form-select"><option>Available</option><option>Adopted</option><option>Pending Approval</option></select>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Color</label>
+                <input type="text" name="color" class="form-control">
               </div>
-              <div class="col-12"><label class="form-label fw-semibold">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
-              <div class="col-12"><label class="form-label fw-semibold">Photo</label><input type="file" name="image" class="form-control" accept="image/*" required></div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Health Status</label>
+                <input type="text" name="health_status" class="form-control" placeholder="e.g. Vaccinated, Healthy">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Temperament</label>
+                <input type="text" name="temperament" class="form-control" placeholder="e.g. Friendly, Calm">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Adoption Status</label>
+                <select name="adoption_status" class="form-select">
+                  <option>Available</option>
+                  <option>Adopted</option>
+                  <option>Pending</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Date Sheltered</label>
+                <input type="date" name="date_sheltered" class="form-control" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Photo</label>
+                <input type="file" name="image" class="form-control" accept="image/*" required>
+              </div>
             </div>
           </div>
           <div class="modal-footer bg-white">
@@ -216,6 +260,24 @@ if (isset($_POST['add_pet'])) {
             <button type="submit" name="add_pet" class="btn btn-add px-4">Add Pet</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header" style="background-color:#A9745B; color:white;">
+          <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right"></i> Confirm Logout</h5>
+        </div>
+        <div class="modal-body text-center">
+          <p class="fw-semibold mb-3" style="color:#333;">Are you sure you want to log out?</p>
+          <div class="d-flex justify-content-center gap-3">
+            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn-danger px-4" id="confirmLogoutBtn">Yes</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -240,6 +302,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const addPetModal = new bootstrap.Modal(modalElement);
     openButton.addEventListener("click", () => addPetModal.show());
   }
+});
+
+// ✅ Logout redirect
+document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+  window.location.href = 'logout.php';
 });
 </script>
 </body>

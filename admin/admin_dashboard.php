@@ -149,7 +149,9 @@ session_start();
       <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
       <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
       <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
-      <a href="logout.php" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+      <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        <i class="bi bi-box-arrow-right me-2"></i> Logout
+      </a>
     </nav>
   </div>
 
@@ -230,6 +232,36 @@ session_start();
     </div>
   </div>
 
+  <!-- Logout Confirmation Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg" style="border-radius: 20px; overflow: hidden;">
+        
+        <!-- Header -->
+        <div class="modal-header text-white" style="background-color: #A9745B; border-bottom: none;">
+          <h5 class="modal-title w-100 text-center" id="logoutModalLabel">
+            <i class="bi bi-box-arrow-right"></i> Confirm Logout
+          </h5>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body text-center py-4" style="background-color: #FFF8F3;">
+          <p class="fw-semibold mb-4" style="color:#333;">Are you sure you want to log out?</p>
+          <div class="d-flex justify-content-center gap-3">
+            <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn-danger px-4 rounded-pill" id="confirmLogoutBtn">Yes</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+      window.location.href = 'logout.php';
+    });
+  </script>
 </body>
 </html>
