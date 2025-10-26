@@ -63,7 +63,7 @@
 
   <div class="login-card">
     <h3 class="login-title">Welcome Back!</h3>
-    <form action="login_process.php" method="POST">
+    <form action="config/login_process.php" method="POST">
       <div class="mb-3">
         <label for="email" class="form-label">Email Address</label>
         <input type="email" class="form-control" id="email" name="email" required>

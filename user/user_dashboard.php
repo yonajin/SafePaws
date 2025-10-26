@@ -83,29 +83,12 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
-  <a class="navbar-brand" href="index.php">SafePaws</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Donations</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="adopt.php">Adopt Now</a></li>
-    </ul>
-  </div>
-</nav>
-
   <!-- 🔹 Dashboard Body -->
   <div class="dashboard-container">
     <h2>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>! 🐾</h2>
     <p class="mt-3">Thank you for being part of the <strong>SafePaws</strong> community.</p>
     <p>Explore available pets, make donations, and help us create a better world for animals.</p>
-    <a href="adopt.php" class="btn btn-logout mt-3">View Adoptable Pets</a>
+    <a href="user_adopt.php" class="btn btn-logout mt-3">View Adoptable Pets</a>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

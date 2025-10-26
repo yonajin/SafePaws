@@ -1,37 +1,43 @@
 <?php
-include 'config.php';
+include('db.php');
+session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+if (isset($_POST['register'])) {
+    $full_name = mysqli_real_escape_string($conn, $_POST['full_name']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
 
-    // Check if email already exists
-    $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $check->bind_param("s", $email);
-    $check->execute();
-    $check->store_result();
-
-    if ($check->num_rows > 0) {
-        echo "<script>alert('Email already registered. Please login instead.'); window.location='login.php';</script>";
+    // Check if passwords match
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] = "⚠️ Passwords do not match!";
+        header("Location: register.php");
         exit();
     }
 
-    // Hash the password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    // Check if email already exists
+    $check_email = "SELECT * FROM users WHERE email = '$email'";
+    $result = mysqli_query($conn, $check_email);
 
-    // Insert user
-    $sql = $conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-    $sql->bind_param("sss", $name, $email, $hashedPassword);
-
-    if ($sql->execute()) {
-        echo "<script>alert('Registration successful! You can now log in.'); window.location='login.php';</script>";
-    } else {
-        echo "<script>alert('Something went wrong. Please try again.'); window.location='register.php';</script>";
+    if (mysqli_num_rows($result) > 0) {
+        $_SESSION['error'] = "⚠️ Email is already registered!";
+        header("Location: register.php");
+        exit();
     }
 
-    $check->close();
-    $sql->close();
-    $conn->close();
+    // Hash password and insert
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $query = "INSERT INTO users (full_name, email, password, status, date_registered)
+              VALUES ('$full_name', '$email', '$hashed_password', 'Active', NOW())";
+
+    if (mysqli_query($conn, $query)) {
+        $_SESSION['success'] = "✅ Registration successful! You can now log in.";
+        header("Location: login.php");
+        exit();
+    } else {
+        $_SESSION['error'] = "❌ Error: " . mysqli_error($conn);
+        header("Location: register.php");
+        exit();
+    }
 }
 ?>

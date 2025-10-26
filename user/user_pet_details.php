@@ -1,3 +1,25 @@
+<?php
+include('../config/db.php');
+
+// Get pet ID from URL (e.g., pet_details.php?id=1)
+if (isset($_GET['pet_id'])) {
+    $pet_id = intval($_GET['pet_id']);
+
+    $sql = "SELECT * FROM pets WHERE pet_id = $pet_id";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $pet = $result->fetch_assoc();
+    } else {
+        echo "<div class='container mt-5'><h3>Pet not found.</h3></div>";
+        exit;
+    }
+} else {
+    echo "<div class='container mt-5'><h3>No pet selected.</h3></div>";
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,48 +65,11 @@
   margin-left: 20px;
 }
     
-.hero {
-  background-image: url("assets/dogcat.webp");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  height: 700px;
-  color: #FFF8F3;
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start; /* 🔹 aligns to the left */
-  text-align: left;        /* 🔹 left-align text */
-  padding-left: 100px;     /* 🔹 space from the left edge */
-}
-
-    .hero h1 {
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 700;
-      font-size: 50px;
-    }
-    .hero p {
-      font-family: 'Quicksand', sans-serif;
-      font-size: 22px;
-      font-weight: 600;
-    }
-    .hero button {
-      background-color: #FFB6A0;
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 600;
-      border: none;
-      color: #0A0000;
-      width: 175px;
-    }
     .section-title {
       font-weight: 600;
       margin-bottom: 20px;
     }
-    .about-img {
-      width: 100%;
-      border-radius: 10px;
-    }
+
     footer {
       background: #f1ece9;
       text-align: center;
@@ -123,17 +108,13 @@
       padding: 40px;
       margin-top: 60px;
     }
-    .pet-img {
-      width: 100%;
-      border-radius: 15px;
-      object-fit: cover;
-    }
     .pet-name {
       font-size: 2rem;
       font-weight: 700;
       color: #333;
     }
-    .pet-age {
+    .pet-age, .pet-breed, .pet-gender, .pet-color, .pet-health-status, .pet-temperament,
+    .pet-adoption-status, .pet-date-sheltered{
       font-size: 1.1rem;
       color: #777;
       margin-bottom: 15px;
@@ -155,40 +136,27 @@
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
-  <a class="navbar-brand" href="index.php">SafePaws</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Donations</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="adopt.php">Adopt Now</a></li>
-    </ul>
-  </div>
-</nav>
+<?php include('../includes/user_navbar.php'); ?>
 
   <div class="container pet-details-container">
     <div class="row align-items-center">
-      <!-- Pet Image -->
       <div class="col-md-6">
-        <img src="assets/dog1.jpg" alt="Bapi" class="pet-img">
+        <img src="<?php echo $pet['image_url']; ?>" alt="<?php echo $pet['name']; ?>" class="pet-img">
       </div>
-
-      <!-- Pet Details -->
       <div class="col-md-6 text-start mt-4 mt-md-0">
-        <h2 class="pet-name">Bapi</h2>
-        <p class="pet-age">Age: 2 years old</p>
-        <p class="pet-desc">
-          Bapi is a playful and affectionate dog who loves outdoor walks and belly rubs.
-          He’s friendly with kids and other pets, fully vaccinated, and ready for a loving home.
-          Adopt Bapi today and give him the forever family he deserves!
-        </p>
-        <button class="btn btn-adopt mt-3" onclick="window.location.href='login.php'">Adopt Me</button>
+        <h2 class="pet-name"><?php echo $pet['name']; ?></h2>
+        <p>Classification: <?php echo $pet['classification']; ?></p>
+        <p>Age: <?php echo $pet['age']; ?></p>
+        <p>Breed: <?php echo $pet['breed']; ?></p>
+        <p>Gender: <?php echo $pet['gender']; ?></p>
+        <p>Color: <?php echo $pet['color']; ?></p>
+        <p>Health Status: <?php echo $pet['health_status']; ?></p>
+        <p>Temperament: <?php echo $pet['temperament']; ?></p>
+        <p>Adoption Status: <?php echo $pet['adoption_status']; ?></p>
+        <p>Date Sheltered: <?php echo date('m/d/Y', strtotime($pet['date_sheltered'])); ?></p>
+        <button class="btn btn-adopt mt-3" onclick="window.location.href='../user/user_adopt_form.php?pet_id=<?php echo $pet['pet_id']; ?>'">
+             Adopt Me
+        </button>
       </div>
     </div>
   </div>

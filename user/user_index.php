@@ -1,3 +1,7 @@
+<?php
+include('../config/db.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,37 +17,37 @@
     }
 
     .navbar {
-  background-color: #A9745B !important;
-  height: 70px;
-}
+      background-color: #A9745B !important;
+      height: 70px;
+    }
 
-.navbar .nav-link,
-.navbar .navbar-brand {
-  color: #FFFFFF !important;
-}
+    .navbar .nav-link,
+    .navbar .navbar-brand {
+      color: #FFFFFF !important;
+    }
 
-.navbar .nav-link:hover,
-.navbar .navbar-brand:hover {
-  color: #ffe6d5 !important; /* optional hover color */
-}
+    .navbar .nav-link:hover,
+    .navbar .navbar-brand:hover {
+      color: #ffe6d5 !important; /* optional hover color */
+    }
 
     .navbar-brand {
-  font-family: 'Quicksand', sans-serif;
-  color: #FFF8F3 !important;
-  font-weight: 700; /* optional, makes it bolder */
-  font-size: 40px;
-}
+      font-family: 'Quicksand', sans-serif;
+      color: #FFF8F3 !important;
+      font-weight: 700; /* optional, makes it bolder */
+      font-size: 40px;
+    }
 
-.navbar .nav-link {
-  font-family: 'Poppins', sans-serif;
-  color: #FFF8F3 !important;
-  font-weight: 500;
-  font-size: 17px;
-  margin-left: 20px;
-}
+    .navbar .nav-link {
+      font-family: 'Poppins', sans-serif;
+      color: #FFF8F3 !important;
+      font-weight: 500;
+      font-size: 17px;
+      margin-left: 20px;
+    }
     
 .hero {
-  background-image: url("assets/dogcat.webp");
+  background-image: url("../assets/images/dogcat.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -101,95 +105,86 @@
   margin-bottom: 8px;    /* optional, rounded corners */
 }
 
-.pet-img {
-  width: 100%;
-  border-radius: 10px;
-  aspect-ratio: 1 / 1;     /* keeps the image perfectly square */
-  object-fit: cover; 
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
 
-.pet-img:hover {
-  transform: scale(1.05); /* zoom in slightly */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* add subtle shadow */
-}
+ /* Pets Section */
+    .pet-card {
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #fff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .pet-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+    .pet-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .pet-info {
+      padding: 15px;
+      text-align: center;
+    }
+    .pet-name {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
 
 
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
-  <a class="navbar-brand" href="index.php">SafePaws</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Donations</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="adopt.php">Adopt Now</a></li>
-    </ul>
-  </div>
-</nav>
+<?php include('../includes/user_navbar.php'); ?>
 
 <!-- Hero Section -->
 <section class="hero">
   <h1>Adopt Love,<br>Save Lives</h1>
   <p>Find Your New Best Friend at SafePaws</p>
-  <button class="btn btn-lg mt-2" onclick="window.location.href='adopt.php'">
+  <button class="btn btn-lg mt-2" onclick="window.location.href='user_adopt.php'">
   Find a Pet
 </button>
 
 </section>
 
-<!-- Meet Our Pets -->
+<!-- 🐾 Meet Our Pets -->
 <section class="container text-center py-5">
-  <h2 class="section-title mb-4">Meet Our Pets</h2>
-  <div class="row g-4">
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat1.jpg" class="pet-img" alt="Rigby">
-      <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat2.jpg" class="pet-img" alt="Nigcat">
-      <p style="font-size: 20px; margin-top: 10px;">Nigcat</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat3.jpg" class="pet-img" alt="Chipoy">
-      <p style="font-size: 20px; margin-top: 10px;">Chipoy</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/cat4.jpg" class="pet-img" alt="Wowo">
-      <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
-    </div>
+  <h2 class="section-title mb-4">Meet Our Lovely Pets</h2>
 
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/dog1.jpg" class="pet-img" alt="Bapi">
-  </a>
-  <p style="font-size: 20px;">Bapi</p>
-   </div>
-   
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/dog2.jpg" class="pet-img" alt="Jimbo">
-      <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/dog3.jpg" class="pet-img" alt="Mimi">
-      <p style="font-size: 20px; margin-top: 10px;">Mimi</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/dog4.jpg" class="pet-img" alt="Bogart">
-      <p style="font-size: 20px; margin-top: 10px;">Bogart</p>
-    </div>
-    <!-- add more as needed -->
+  <div class="row g-4" id="pets-container">
+    <?php
+    $sql = "SELECT * FROM pets ORDER BY date_sheltered DESC";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0):
+      while ($pet = $result->fetch_assoc()):
+    ?>
+      <div class="col-md-3 col-sm-6 pet-item" data-type="<?php echo $pet['classification']; ?>">
+        <div class="pet-card">
+          <a href="user_pet_details.php?id=<?php echo $pet['pet_id']; ?>">
+            <img src="<?php echo !empty($pet['image_url']) ? $pet['image_url'] : '../assets/images/cat.jpg'; ?>" 
+                 class="pet-img" alt="<?php echo htmlspecialchars($pet['name']); ?>">
+          </a>
+          <div class="pet-info">
+            <p class="pet-name"><?php echo htmlspecialchars($pet['name']); ?></p>
+            <p class="text-muted mb-1"><?php echo htmlspecialchars($pet['breed']); ?></p>
+            <p class="text-muted small"><?php echo htmlspecialchars($pet['age']); ?></p>
+          </div>
+        </div>
+      </div>
+    <?php
+      endwhile;
+    else:
+      echo "<p>No pets available for adoption right now.</p>";
+    endif;
+    ?>
   </div>
- <a href="adopt.php" class="btn btn-outline-dark mt-4">View More</a>
+   <a href="user_adopt.php" class="btn btn-outline-dark mt-4">View More</a>
+
 </section>
 
 <!-- Donation Section -->

@@ -43,7 +43,7 @@
 }
     
 .hero {
-  background-image: url('../assets/images/dogcat.webp');
+  background-image: url('assets/images/dogcat.webp');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -120,22 +120,7 @@
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
-  <a class="navbar-brand" href="index.php">SafePaws</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link" href='about.php'>About Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Donations</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="adopt.php">Adopt Now</a></li>
-    </ul>
-  </div>
-</nav>
+<?php include('includes/navbar.php'); ?>
 
 <!-- Hero Section -->
 <section class="hero">
@@ -152,40 +137,25 @@
   <h2 class="section-title mb-4">Meet Our Pets</h2>
   <div class="row g-4">
     <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/cat1.jpg" class="pet-img" alt="Rigby">
+      <img src="assets/images/cat1.jpg" class="pet-img" alt="Rigby">
       <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
     </div>
+
     <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/cat2.jpg" class="pet-img" alt="Nigcat">
-      <p style="font-size: 20px; margin-top: 10px;">Nigcat</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/cat3.jpg" class="pet-img" alt="Chipoy">
-      <p style="font-size: 20px; margin-top: 10px;">Chipoy</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/cat4.jpg" class="pet-img" alt="Wowo">
+      <img src="assets/images/cat4.jpg" class="pet-img" alt="Wowo">
       <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
     </div>
 
     <div class="col-md-3 col-sm-6 pet-item">
   <a href="pet_details.php">
-    <img src="../assets/images/dog1.jpg" class="pet-img" alt="Bapi">
+    <img src="assets/images/dog1.jpg" class="pet-img" alt="Bapi">
   </a>
   <p style="font-size: 20px;">Bapi</p>
    </div>
    
     <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
+      <img src="assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
       <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/dog3.jpg" class="pet-img" alt="Mimi">
-      <p style="font-size: 20px; margin-top: 10px;">Mimi</p>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <img src="../assets/images/dog4.jpg" class="pet-img" alt="Bogart">
-      <p style="font-size: 20px; margin-top: 10px;">Bogart</p>
     </div>
     <!-- add more as needed -->
   </div>
