@@ -59,14 +59,7 @@ if (!$pet) {
     <!-- ✅ Hidden Pet Info -->
     <input type="hidden" name="pet_id" value="<?= htmlspecialchars($pet['pet_id']) ?>">
     <input type="hidden" name="pet_name" value="<?= htmlspecialchars($pet['name']) ?>">
-    <?php
-          $type = ucfirst(strtolower($pet['type'])); // "cat" → "Cat", "dog" → "Dog"
-          if (!in_array($type, ['Cat', 'Dog'])) {
-            $type = 'Dog'; // or default fallback
-            }
-    ?>
-    <input type="hidden" name="classification" value="<?= htmlspecialchars($type) ?>">
-
+    <input type="hidden" name="classification" value="<?= htmlspecialchars($pet['classification']) ?>">
 
     <h5 class="mt-4">Applicant’s Information</h5>
     <div class="row">

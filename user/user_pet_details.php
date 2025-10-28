@@ -135,9 +135,7 @@ if (isset($_GET['pet_id'])) {
   </style>
 </head>
 <body>
-
 <?php include('../includes/user_navbar.php'); ?>
-
   <div class="container pet-details-container">
     <div class="row align-items-center">
       <div class="col-md-6">
@@ -160,13 +158,10 @@ if (isset($_GET['pet_id'])) {
       </div>
     </div>
   </div>
-
   <!-- Footer -->
 <footer>
   © 2025 SafePaws. All Rights Reserved.
 </footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

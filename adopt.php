@@ -135,29 +135,35 @@
 
   <div class="row g-4" id="pets-container">
     <!-- Cats -->
+
     <div class="col-md-3 col-sm-6 pet-item cat">
-      <img src="assets/images/cat1.jpg" class="pet-img" alt="Rigby">
-      <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
-    </div>
+  <a href="pet_details.php">
+    <img src="assets/images/cat1.jpg" class="pet-img" alt="Rigby">
+  </a>
+  <p style="font-size: 20px;">Rigby</p>
+   </div>
+
     <div class="col-md-3 col-sm-6 pet-item cat">
-      <img src="assets/images/cat4.jpg" class="pet-img" alt="Wowo">
-      <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
-    </div>
+  <a href="pet_details.php">
+    <img src="assets/images/cat4.jpg" class="pet-img" alt="Wowo">
+  </a>
+  <p style="font-size: 20px;">Wowo</p>
+   </div>
 
     <!-- Dogs -->
-    <div class="col-md-3 col-sm-6 pet-item">
+    <div class="col-md-3 col-sm-6 pet-item dog">
   <a href="pet_details.php">
     <img src="assets/images/dog1.jpg" class="pet-img" alt="Bapi">
   </a>
   <p style="font-size: 20px;">Bapi</p>
    </div>
 
-    <div class="col-md-3 col-sm-6 pet-item dog">
-      <img src="assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
-      <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
-    </div>
-  </div>
-
+   <div class="col-md-3 col-sm-6 pet-item dog">
+  <a href="pet_details.php">
+    <img src="assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
+  </a>
+  <p style="font-size: 20px;">Jimbo</p>
+   </div>
 </section>
 
 <!-- JavaScript Filter Function -->

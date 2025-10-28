@@ -165,7 +165,7 @@ include('../config/db.php');
     ?>
       <div class="col-md-3 col-sm-6 pet-item" data-type="<?php echo $pet['classification']; ?>">
         <div class="pet-card">
-          <a href="user_pet_details.php?id=<?php echo $pet['pet_id']; ?>">
+          <a href="user_pet_details.php?pet_id=<?php echo $pet['pet_id']; ?>">
             <img src="<?php echo !empty($pet['image_url']) ? $pet['image_url'] : '../assets/images/cat.jpg'; ?>" 
                  class="pet-img" alt="<?php echo htmlspecialchars($pet['name']); ?>">
           </a>

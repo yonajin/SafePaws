@@ -28,9 +28,9 @@ if (isset($_SESSION['user_id'])) {
   <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
     <ul class="navbar-nav align-items-center">
       <li class="nav-item"><a class="nav-link" href="user_about.php">About Us</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Donations</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+      <li class="nav-item"><a class="nav-link" href="user_gallery.php">Gallery</a></li>
+      <li class="nav-item"><a class="nav-link" href="user_donations.php">Donations</a></li>
+      <li class="nav-item"><a class="nav-link" href="user_contactus.php">Contact Us</a></li>
       <li class="nav-item"><a class="nav-link" href="user_adopt.php">Adopt Now</a></li>
 
       <!-- Adoption Status Link with Badge -->

@@ -1,6 +1,8 @@
 <?php
 include('../config/db.php');
 session_start();
+echo "<pre>DEBUG: user_id = " . $_SESSION['user_id'] . "</pre>";
+
 
 // ✅ Require login
 if (!isset($_SESSION['user_id'])) {
@@ -15,20 +17,30 @@ $stmt = $conn->prepare("
     SELECT 
         ar.request_id,
         ar.pet_id,
-        COALESCE(p.name, 'Unknown') AS pet_name,
+        ar.pet_name,
         CONCAT(ar.first_name, ' ', ar.last_name) AS full_name,
-        COALESCE(p.classification, ar.classification) AS classification,
+        ar.classification,
         ar.status,
         ar.request_date
     FROM adoption_requests ar
-    LEFT JOIN pets p ON ar.pet_id = p.pet_id
     WHERE ar.user_id = ?
     ORDER BY ar.request_date DESC
 ");
-$stmt = $conn->prepare("SELECT * FROM adoption_requests WHERE user_id = ?");
+
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
+echo "<pre>DEBUG SESSION:\n";
+print_r($_SESSION);
+echo "</pre>";
+
+echo "<pre>DEBUG QUERY TEST:\n";
+var_dump($user_id);
+echo "</pre>";
+
+echo "<pre>USER ID CHECK: "; var_dump($_SESSION['user_id']); echo "</pre>";
+
 ?>
 
 <!DOCTYPE html>
@@ -88,6 +100,7 @@ $result = $stmt->get_result();
     .status-denied { color: #dc3545; font-weight: bold; }
   </style>
 </head>
+
 <body>
 
 <?php include('../includes/user_navbar.php'); ?>
@@ -117,7 +130,7 @@ $result = $stmt->get_result();
                 <td><?= htmlspecialchars($row['pet_id']) ?></td>
                 <td><?= htmlspecialchars($row['pet_name']) ?></td>
                 <td><?= htmlspecialchars($row['full_name']) ?></td>
-                <td><?= htmlspecialchars($row['classification'] ?? 'N/A') ?></td>
+                <td><?= htmlspecialchars($row['classification']) ?></td>
                 <td>
                   <?php if ($row['status'] == 'Pending'): ?>
                     <span class="status-pending">Pending</span>
@@ -136,7 +149,6 @@ $result = $stmt->get_result();
     <?php else: ?>
       <p class="text-center text-muted">You haven’t submitted any adoption requests yet.</p>
     <?php endif; ?>
-
   </div>
 </div>
 

@@ -136,15 +136,20 @@
 <section class="container text-center py-5">
   <h2 class="section-title mb-4">Meet Our Pets</h2>
   <div class="row g-4">
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/images/cat1.jpg" class="pet-img" alt="Rigby">
-      <p style="font-size: 20px; margin-top: 10px;">Rigby</p>
-    </div>
 
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/images/cat4.jpg" class="pet-img" alt="Wowo">
-      <p style="font-size: 20px; margin-top: 10px;">Wowo</p>
-    </div>
+    <div class="col-md-3 col-sm-6 pet-item">
+  <a href="pet_details.php">
+    <img src="assets/images/cat1.jpg" class="pet-img" alt="Rigby">
+  </a>
+  <p style="font-size: 20px;">Rigby</p>
+   </div>
+
+    <div class="col-md-3 col-sm-6 pet-item">
+  <a href="pet_details.php">
+    <img src="assets/images/cat4.jpg" class="pet-img" alt="Wowo">
+  </a>
+  <p style="font-size: 20px;">Wowo</p>
+   </div>
 
     <div class="col-md-3 col-sm-6 pet-item">
   <a href="pet_details.php">
@@ -152,11 +157,13 @@
   </a>
   <p style="font-size: 20px;">Bapi</p>
    </div>
-   
-    <div class="col-md-3 col-sm-6">
-      <img src="assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
-      <p style="font-size: 20px; margin-top: 10px;">Jimbo</p>
-    </div>
+
+    <div class="col-md-3 col-sm-6 pet-item">
+  <a href="pet_details.php">
+    <img src="assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
+  </a>
+  <p style="font-size: 20px;">Jimbo</p>
+   </div>
     <!-- add more as needed -->
   </div>
  <a href="adopt.php" class="btn btn-outline-dark mt-4">View More</a>
