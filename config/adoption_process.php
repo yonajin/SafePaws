@@ -35,39 +35,26 @@ if (isset($_POST['submit'])) {
         exit();
     }
 
-    // ✅ Handle file upload
+    // ✅ Handle optional file upload
     $targetDir = "../uploads/";
     if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
 
-    $fileName = basename($_FILES["valid_id"]["name"]);
-    $fileTmp = $_FILES["valid_id"]["tmp_name"];
-    $fileSize = $_FILES["valid_id"]["size"];
-    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
+    $valid_id_path = "NULL"; // default if no upload
 
-    // ✅ Validate upload
-    if (!empty($fileName)) {
+    if (!empty($_FILES["valid_id"]["name"])) {
+        $fileName = basename($_FILES["valid_id"]["name"]);
+        $fileTmp = $_FILES["valid_id"]["tmp_name"];
+        $fileSize = $_FILES["valid_id"]["size"];
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
+
         if (in_array($fileExt, $allowed)) {
             if ($fileSize <= 8 * 1024 * 1024) { // 8MB limit
                 $newFileName = time() . "_" . uniqid() . "." . $fileExt;
                 $targetFilePath = $targetDir . $newFileName;
 
                 if (move_uploaded_file($fileTmp, $targetFilePath)) {
-
-                    // ✅ Insert adoption request
-                    $query = "INSERT INTO adoption_requests 
-                        (user_id, pet_id, pet_name, first_name, last_name, email, address, phone, birth_date, occupation, company, social_media, classification, adopted_before, reason, valid_id, status, request_date)
-                        VALUES 
-                        ('$user_id', '$pet_id', '$pet_name', '$first_name', '$last_name', '$email', '$address', '$phone', '$birth_date', '$occupation', '$company', '$social_media', '$classification', '$adopted_before', '$reason', '$targetFilePath', 'Pending', NOW())";
-
-                    if (mysqli_query($conn, $query)) {
-                        echo "<script>alert('Application submitted successfully! Our team will review your request.'); window.location='../user/user_adoption_status.php';</script>";
-                        exit();
-                    } else {
-                        echo "<script>alert('Database error: " . mysqli_error($conn) . "'); window.history.back();</script>";
-                        exit();
-                    }
-
+                    $valid_id_path = "'" . mysqli_real_escape_string($conn, $targetFilePath) . "'";
                 } else {
                     echo "<script>alert('Failed to upload file. Please try again.'); window.history.back();</script>";
                     exit();
@@ -80,8 +67,21 @@ if (isset($_POST['submit'])) {
             echo "<script>alert('Invalid file type. Please upload JPG, PNG, or PDF only.'); window.history.back();</script>";
             exit();
         }
+    }
+
+    // ✅ Insert adoption request (valid_id can be NULL)
+    $query = "
+        INSERT INTO adoption_requests 
+        (user_id, pet_id, pet_name, first_name, last_name, email, address, phone, birth_date, occupation, company, social_media, classification, adopted_before, reason, valid_id, status, request_date)
+        VALUES 
+        ('$user_id', '$pet_id', '$pet_name', '$first_name', '$last_name', '$email', '$address', '$phone', '$birth_date', '$occupation', '$company', '$social_media', '$classification', '$adopted_before', '$reason', $valid_id_path, 'Pending', NOW())
+    ";
+
+    if (mysqli_query($conn, $query)) {
+        echo "<script>alert('Application submitted successfully! Our team will review your request.'); window.location='../user/user_adoption_status.php';</script>";
+        exit();
     } else {
-        echo "<script>alert('Please upload a valid ID file.'); window.history.back();</script>";
+        echo "<script>alert('Database error: " . mysqli_error($conn) . "'); window.history.back();</script>";
         exit();
     }
 

@@ -135,8 +135,8 @@ if (!$pet) {
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Upload a valid ID *</label>
-      <input type="file" name="valid_id" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
+      <label class="form-label">Upload a valid ID</label>
+      <input type="file" name="valid_id" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
       <small class="text-muted">Max. file size: 8 MB</small>
     </div>
 

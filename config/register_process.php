@@ -10,8 +10,7 @@ if (isset($_POST['register'])) {
 
     // Check if passwords match
     if ($password !== $confirm_password) {
-        $_SESSION['error'] = "⚠️ Passwords do not match!";
-        header("Location: register.php");
+        echo "<script>alert('⚠️ Passwords do not match!'); window.location.href='register.php';</script>";
         exit();
     }
 
@@ -20,8 +19,7 @@ if (isset($_POST['register'])) {
     $result = mysqli_query($conn, $check_email);
 
     if (mysqli_num_rows($result) > 0) {
-        $_SESSION['error'] = "⚠️ Email is already registered!";
-        header("Location: register.php");
+        echo "<script>alert('⚠️ Email is already registered!'); window.location.href='register.php';</script>";
         exit();
     }
 
@@ -31,12 +29,16 @@ if (isset($_POST['register'])) {
               VALUES ('$full_name', '$email', '$hashed_password', 'Active', NOW())";
 
     if (mysqli_query($conn, $query)) {
-        $_SESSION['success'] = "✅ Registration successful! You can now log in.";
-        header("Location: login.php");
+        echo "<script>
+            alert('✅ Registration successful! You can now log in.');
+            window.location.href='../login.php';
+        </script>";
         exit();
     } else {
-        $_SESSION['error'] = "❌ Error: " . mysqli_error($conn);
-        header("Location: register.php");
+        echo "<script>
+            alert('❌ Error: " . mysqli_error($conn) . "');
+            window.location.href='register.php';
+        </script>";
         exit();
     }
 }
