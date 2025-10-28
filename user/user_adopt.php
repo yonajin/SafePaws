@@ -10,107 +10,7 @@ include('../config/db.php');
   <title>SafePaws - Adopt a Pet</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Poppins', sans-serif;}
-
-    /* Navbar */
-    .navbar {
-  background-color: #A9745B !important;
-  height: 70px;
-}
-
-.navbar .nav-link,
-.navbar .navbar-brand {
-  color: #FFFFFF !important;
-}
-
-.navbar .nav-link:hover,
-.navbar .navbar-brand:hover {
-  color: #ffe6d5 !important; /* optional hover color */
-}
-
-    .navbar-brand {
-  font-family: 'Quicksand', sans-serif;
-  color: #FFF8F3 !important;
-  font-weight: 700; /* optional, makes it bolder */
-  font-size: 40px;
-}
-
-.navbar .nav-link {
-  font-family: 'Poppins', sans-serif;
-  color: #FFF8F3 !important;
-  font-weight: 500;
-  font-size: 17px;
-  margin-left: 20px;
-}
-
-    /* Hero */
-    .hero {
-      background-image: url("../assets/images/dogcat.webp");
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      height: 700px;
-      color: #FFF8F3;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      text-align: left;
-      padding-left: 100px;
-    }
-    .hero h1 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 50px; }
-    .hero p { font-family: 'Quicksand', sans-serif; font-size: 22px; font-weight: 600; }
-
-    .section-title {
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    /* Pets Section */
-    .pet-card {
-      border-radius: 12px;
-      overflow: hidden;
-      background-color: #fff;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-    .pet-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-    }
-    .pet-img {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-      cursor: pointer;
-    }
-    .pet-info {
-      padding: 15px;
-      text-align: center;
-    }
-    .pet-name {
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-    .btn-view {
-      background-color: #f8a488;
-      border: none;
-      color: white;
-      transition: background-color 0.2s ease;
-    }
-    .btn-view:hover { background-color: #e78d73; }
-
-    footer {
-      background: #f1ece9;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-      color: #333;
-      margin-top: 40px;
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 
@@ -182,6 +82,74 @@ include('../config/db.php');
   });
 </script>
 
+<!-- Adoption FAQ Section -->
+<section class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="section-title" style="color: #2e2e2e;">Adoption FAQ</h2>
+    <p class="text-muted">Learn more about our adoption process and requirements</p>
+  </div>
+
+  <div class="row g-4 align-items-start">
+    <!-- Left Column -->
+    <div class="col-md-6">
+      <div class="faq-item mb-4">
+        <h5 class="fw-bold">Can I return my adopted pet if I change my mind?</h5>
+        <p>
+          A pet is a <strong>lifetime commitment</strong>. However, if you truly can’t keep your adopted pet,
+          please don’t abandon them. Contact us so we can find another loving home for them.
+        </p>
+      </div>
+
+      <div class="faq-item mb-4">
+        <h5 class="fw-bold">Can my adoption application get denied?</h5>
+        <p>
+          Yes. Some reasons include not being able to keep pets indoors, household incompatibility,
+          or any condition that could harm the health and safety of our animals.
+        </p>
+      </div>
+
+      <div class="faq-item mb-4">
+        <h5 class="fw-bold">I live in the province/abroad. Can I still adopt?</h5>
+        <p>
+          Yes, but special arrangements may be needed for meet-and-greet sessions depending on your location.
+          Please contact us to discuss your options.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-md-6">
+      <div class="p-4 rounded-4 shadow-sm animate-fade" style="background-color: #333; color: #fff;">
+        <ul class="list-unstyled mb-0">
+          <li class="fade-item">🐾 Submit the adoption application form</li>
+          <li class="fade-item">💬 Attend the online/onsite interview</li>
+          <li class="fade-item">🐶 Meet our shelter animals in person</li>
+          <li class="fade-item">🏠 Visit your chosen pet to confirm your choice</li>
+          <li class="fade-item">📋 Wait for vet clearance and schedule pick up</li>
+          <li class="fade-item">💰 Pay the adoption fee: <strong>₱500 (cat)</strong> / <strong>₱1000 (dog)</strong></li>
+          <li class="fade-item">❤️ Take your pet home!</li>
+        </ul>
+      </div>
+
+      <div class="faq-item mt-4">
+        <h5 class="fw-bold">Why is there an adoption fee?</h5>
+        <p>
+          The adoption fee is a token of your commitment. It helps cover your pet’s
+          spay/neuter surgery, vaccinations, and tick-flea treatment.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h5 class="fw-bold">Can I adopt more than one pet?</h5>
+        <p>
+          Yes, some applicants may adopt more than one pet depending on our evaluation,
+          especially if the animals belong to a bonded pair.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Donation Section -->
 <section class="container text-center py-5">
   <div class="p-5 rounded-4 shadow-sm" style="background-color: #fff6f1; margin-bottom: 20px;">
@@ -211,8 +179,7 @@ include('../config/db.php');
       </p>
     </div>
     <div class="col-md-5">
-      <div class="bg-secondary about-img" style="height:250px;"></div>
-    </div>
+      <img src="../assets/images/about_img.jpg" alt="About SafePaws" class="about-img shadow">    </div>
   </div>
 </section>
 
@@ -237,10 +204,7 @@ include('../config/db.php');
   </form>
 </section>
 
-<!-- Footer -->
-<footer>
-  © 2025 SafePaws. All Rights Reserved.
-</footer>
+<?php include('../includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

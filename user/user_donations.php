@@ -136,10 +136,7 @@
 
 <?php include('../includes/user_navbar.php'); ?>
 
-<!-- Footer -->
-<footer>
-  © 2025 SafePaws. All Rights Reserved.
-</footer>
+<?php include('../includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     

@@ -6,117 +6,7 @@
   <title>SafePaws - Landing Page</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .navbar {
-  background-color: #A9745B !important;
-  height: 70px;
-}
-
-.navbar .nav-link,
-.navbar .navbar-brand {
-  color: #FFFFFF !important;
-}
-
-.navbar .nav-link:hover,
-.navbar .navbar-brand:hover {
-  color: #ffe6d5 !important; /* optional hover color */
-}
-
-    .navbar-brand {
-  font-family: 'Quicksand', sans-serif;
-  color: #FFF8F3 !important;
-  font-weight: 700; /* optional, makes it bolder */
-  font-size: 40px;
-}
-
-.navbar .nav-link {
-  font-family: 'Poppins', sans-serif;
-  color: #FFF8F3 !important;
-  font-weight: 500;
-  font-size: 17px;
-  margin-left: 20px;
-}
-    
-.hero {
-  background-image: url('assets/images/dogcat.webp');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  height: 700px;
-  color: #FFF8F3;
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start; /* 🔹 aligns to the left */
-  text-align: left;        /* 🔹 left-align text */
-  padding-left: 100px;     /* 🔹 space from the left edge */
-}
-
-    .hero h1 {
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 700;
-      font-size: 50px;
-    }
-    .hero p {
-      font-family: 'Quicksand', sans-serif;
-      font-size: 22px;
-      font-weight: 600;
-    }
-    .hero button {
-      background-color: #FFB6A0;
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 600;
-      border: none;
-      color: #0A0000;
-      width: 175px;
-    }
-    .section-title {
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    .about-img {
-      width: 100%;
-      border-radius: 10px;
-    }
-    footer {
-      background: #f1ece9;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-      color: #333;
-      margin-top: 40px;
-    }
-
-    .square {
-  background-color: #5a5755ff; /* or bg-secondary if using Bootstrap */
-  aspect-ratio: 1 / 1;       /* makes width = height */
-  width: 100%;               /* fills the column width */
-  border-radius: 8px;    
-  margin-bottom: 8px;    /* optional, rounded corners */
-}
-
-.pet-img {
-  width: 100%;
-  border-radius: 10px;
-  aspect-ratio: 1 / 1;     /* keeps the image perfectly square */
-  object-fit: cover; 
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-.pet-img:hover {
-  transform: scale(1.05); /* zoom in slightly */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* add subtle shadow */
-}
-
-
-  </style>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -139,28 +29,28 @@
 
     <div class="col-md-3 col-sm-6 pet-item">
   <a href="pet_details.php">
-    <img src="assets/images/cat1.jpg" class="pet-img" alt="Rigby">
+    <img src="assets/images/cat1.jpg" class="pet-img1" alt="Rigby">
   </a>
   <p style="font-size: 20px;">Rigby</p>
    </div>
 
     <div class="col-md-3 col-sm-6 pet-item">
   <a href="pet_details.php">
-    <img src="assets/images/cat4.jpg" class="pet-img" alt="Wowo">
+    <img src="assets/images/cat4.jpg" class="pet-img1" alt="Wowo">
   </a>
   <p style="font-size: 20px;">Wowo</p>
    </div>
 
     <div class="col-md-3 col-sm-6 pet-item">
   <a href="pet_details.php">
-    <img src="assets/images/dog1.jpg" class="pet-img" alt="Bapi">
+    <img src="assets/images/dog1.jpg" class="pet-img1" alt="Bapi">
   </a>
   <p style="font-size: 20px;">Bapi</p>
    </div>
 
     <div class="col-md-3 col-sm-6 pet-item">
   <a href="pet_details.php">
-    <img src="assets/images/dog2.jpg" class="pet-img" alt="Jimbo">
+    <img src="assets/images/dog2.jpg" class="pet-img1" alt="Jimbo">
   </a>
   <p style="font-size: 20px;">Jimbo</p>
    </div>
@@ -179,9 +69,9 @@
       initiatives that promote responsible pet ownership. With your support, we can continue improving the
       welfare of animals and creating lasting, positive change within our communities.
     </p>
-    <button class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
+    <a href="donations.php" class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
       Donate Now
-    </button>
+    </a>
   </div>
 </section>
 
@@ -199,7 +89,7 @@
       </p>
     </div>
     <div class="col-md-5">
-      <div class="bg-secondary about-img" style="height:250px;"></div>
+      <img src="assets/images/about_img.jpg" alt="About SafePaws" class="about-img shadow">
     </div>
   </div>
 </section>
@@ -225,10 +115,7 @@
   </form>
 </section>
 
-<!-- Footer -->
-<footer>
-  © 2025 SafePaws. All Rights Reserved.
-</footer>
+<?php include('includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

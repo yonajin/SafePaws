@@ -187,10 +187,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     </div>
   </div>
 
-  <!-- Footer -->
-<footer>
-  © 2025 SafePaws. All Rights Reserved.
-</footer>
+<?php include('includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
