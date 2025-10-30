@@ -180,3 +180,53 @@ footer {
   font-weight: 700;
   font-size: 1.2rem;
 }
+
+/* Dashboard box */
+.dashboard-container {
+  max-width: 700px;
+  margin: 100px auto;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  text-align: center;
+}
+
+h2 {
+  color: #333;
+  font-weight: 700;
+}
+
+.btn-logout {
+  background-color: #f8a488;
+  border: none;
+  color: #fff;
+}
+
+.btn-logout:hover {
+  background-color: #e78d73;
+}
+
+.container_form {
+  max-width: 800px;
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  margin: 40px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-submit {
+  background-color: #f47b50;
+  color: #fff;
+  border: none;
+}
+.btn-submit:hover {
+  background-color: #e06d44;
+}
+
+h2 {
+  color: #f47b50;
+  text-align: center;
+  margin-bottom: 25px;
+}

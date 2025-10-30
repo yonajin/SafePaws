@@ -1,33 +1,113 @@
 <?php
-include 'db_connect.php';
+
+include '../config/db.php';
 session_start();
 
+// SECURITY CHECK & ADMIN SESSION SETUP
+
 if (!isset($_SESSION['admin_name'])) {
-  $_SESSION['admin_name'] = "Admin";
+  $result = mysqli_query($conn, "SELECT name FROM admin WHERE id = 1");
+  if ($result && $row = mysqli_fetch_assoc($result)) {
+      $_SESSION['admin_name'] = $row['name'];
+  } else {
+      // Fallback name, a proper system should enforce login redirection
+      $_SESSION['admin_name'] = "Admin"; 
+  }
 }
 
-// Handle Add Pet form submission
-if (isset($_POST['add_pet'])) {
-  $name = mysqli_real_escape_string($conn, $_POST['name']);
-  $type = mysqli_real_escape_string($conn, $_POST['type']);
-  $age = mysqli_real_escape_string($conn, $_POST['age']);
-  $breed = mysqli_real_escape_string($conn, $_POST['breed']);
-  $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-  $status = mysqli_real_escape_string($conn, $_POST['status']);
-  $description = mysqli_real_escape_string($conn, $_POST['description']);
+// SECURE LOGIC: HANDLE ADD PET FORM SUBMISSION (Prepared Statement)
 
-  $image = $_FILES['image']['name'];
+if (isset($_POST['add_pet'])) {
+  // Use trim() to clean up whitespace
+  $name = trim($_POST['name']);
+  $classification = trim($_POST['classification']); 
+  $age = trim($_POST['age']);
+  $breed = trim($_POST['breed']);
+  $gender = trim($_POST['gender']);
+  $color = trim($_POST['color'] ?? ''); 
+  $health_status = trim($_POST['health_status'] ?? ''); 
+  $temperament = trim($_POST['temperament'] ?? ''); 
+  $adoption_status = trim($_POST['adoption_status']); 
+  $date_sheltered = trim($_POST['date_sheltered']); 
+  $description = trim($_POST['description'] ?? '');
+
+  $image = $_FILES['image']['name'] ?? null;
   $target = "uploads/" . basename($image);
 
-  $sql = "INSERT INTO pets (name, type, age, breed, gender, status, description, image, date_added) 
-          VALUES ('$name', '$type', '$age', '$breed', '$gender', '$status', '$description', '$image', NOW())";
+  $sql = "INSERT INTO pets (name, classification, age, breed, gender, color, health_status, temperament, adoption_status, image_url, date_sheltered, description) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   
-  if (mysqli_query($conn, $sql)) {
-    move_uploaded_file($_FILES['image']['tmp_name'], $target);
-    echo "<script>alert('✅ Pet added successfully!'); window.location='manage_pets.php';</script>";
+  $stmt = mysqli_prepare($conn, $sql);
+  
+  if ($stmt) {
+    // Bind parameters: ssssssssssss (12 strings)
+    // Note: The 'image' field is stored as the file name ($image)
+    mysqli_stmt_bind_param($stmt, "ssssssssssss", 
+        $name, $classification, $age, $breed, $gender, $color, 
+        $health_status, $temperament, $adoption_status, $image, $date_sheltered, $description
+    );
+
+    if (mysqli_stmt_execute($stmt)) {
+      if (!empty($image) && move_uploaded_file($_FILES['image']['tmp_name'], $target)) { 
+        // Image uploaded successfully 
+      }
+      $msg = '✅ Pet added successfully!';
+    } else {
+      $msg = "❌ Error adding pet: " . mysqli_stmt_error($stmt);
+    }
+    mysqli_stmt_close($stmt);
   } else {
-    echo "<script>alert('❌ Error adding pet: " . mysqli_error($conn) . "');</script>";
+    $msg = "❌ Database query preparation failed.";
   }
+  
+  echo "<script>alert('{$msg}'); window.location='manage_pets.php';</script>";
+  exit();
+}
+
+// SECURE LOGIC: ADMIN PROFILE UPDATE (For the Admin Profile Modal)
+
+if (isset($_POST['update_admin_profile'])) {
+    $admin_name = trim($_POST['admin_name']);
+    $admin_id = 1; 
+    $msg = "";
+
+    // Handle Name Update (securely)
+    $sql_name = "UPDATE admin SET name = ? WHERE id = ?";
+    $stmt_name = mysqli_prepare($conn, $sql_name);
+    if ($stmt_name) {
+        mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $admin_id);
+        if (mysqli_stmt_execute($stmt_name)) {
+            $_SESSION['admin_name'] = $admin_name; 
+            $msg .= "Profile name updated successfully! ";
+        } else {
+            $msg .= "Error updating profile name: " . mysqli_stmt_error($stmt_name);
+        }
+        mysqli_stmt_close($stmt_name);
+    } 
+
+    // Handle Password Change
+    if (!empty($_POST['new_password'])) {
+        if ($_POST['new_password'] === $_POST['confirm_password']) {
+            $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+            
+            $sql_pass = "UPDATE admin SET password = ? WHERE id = ?";
+            $stmt_pass = mysqli_prepare($conn, $sql_pass);
+            if ($stmt_pass) {
+                mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $admin_id);
+                if (mysqli_stmt_execute($stmt_pass)) {
+                    $msg .= " Password updated successfully!";
+                } else {
+                    $msg .= " Error updating password: " . mysqli_stmt_error($stmt_pass);
+                }
+                mysqli_stmt_close($stmt_pass);
+            }
+        } else {
+             $msg .= " Error: Passwords do not match.";
+        }
+    }
+    
+    echo "<script>alert('{$msg}'); window.location='manage_pets.php';</script>";
+    exit();
 }
 ?>
 
@@ -95,8 +175,8 @@ if (isset($_POST['add_pet'])) {
     tbody tr:nth-child(even) { background-color: #f9f9f9; }
     tbody tr:hover { background-color: #f1edea; transition: 0.2s; }
 
-    .btn-add { background-color: #A9745B; color: white; margin-top: -10px;}
-    .btn-add:hover { background-color: #8e5f47; }
+    .btn-add, .btn-save { background-color: #A9745B; color: white; }
+    .btn-add:hover, .btn-save:hover { background-color: #8e5f47; }
 
     /* --- Profile Dropdown --- */
     .profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
@@ -104,11 +184,16 @@ if (isset($_POST['add_pet'])) {
     .profile-dropdown a:hover { background-color: #f8f8f8; }
 
     img.pet-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; }
+    
+    /* === FIX FOR MODAL CORNERS === */
+    .modal-header {
+      border-top-left-radius: 0.75rem !important;
+      border-top-right-radius: 0.75rem !important;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="sidebar">
     <h2>SafePaws</h2>
     <nav class="nav flex-column text-start w-100">
@@ -118,24 +203,18 @@ if (isset($_POST['add_pet'])) {
       <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
       <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
       <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
-      <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
-        <i class="bi bi-box-arrow-right me-2"></i> Logout
-      </a>
     </nav>
   </div>
 
-  <!-- Topbar -->
   <div class="topbar">
     <i id="profileBtn" class="bi bi-person-circle"></i>
     <div id="profileDropdown" class="profile-dropdown">
-      <a href="admin_profile.php"><i class="bi bi-person"></i> View Profile</a>
-      <a href="settings.php"><i class="bi bi-gear"></i> Settings</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal" class="view-profile-link"><i class="bi bi-person"></i> View Profile</a>
       <hr class="m-0">
-      <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal" id="dropdownLogoutLink"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
   </div>
 
-  <!-- Main Content -->
   <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3 class="fw-bold" style="color:#A9745B; margin:0;">🐾 Manage Pets</h3>
@@ -160,25 +239,28 @@ if (isset($_POST['add_pet'])) {
         </thead>
         <tbody>
           <?php
-          $result = mysqli_query($conn, "SELECT * FROM pets ORDER BY date_sheltered DESC");
+          $result = mysqli_query($conn, "SELECT id, name, classification, breed, age, gender, adoption_status, image_url, date_sheltered FROM pets ORDER BY date_sheltered DESC");
           if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
+              $status_color = match ($row['adoption_status']) {
+                'Available' => 'success',
+                'Adopted' => 'secondary',
+                default => 'warning',
+              };
+              
               echo "<tr>
-                      <td>{$row['pet_id']}</td>
-                      <td><img src='uploads/{$row['image_url']}' class='pet-thumb'></td>
+                      <td>{$row['id']}</td>
+                      <td><img src='uploads/{$row['image_url']}' class='pet-thumb' alt='Pet Photo'></td>
                       <td>{$row['name']}</td>
                       <td>{$row['classification']}</td>
                       <td>{$row['breed']}</td>
                       <td>{$row['age']}</td>
                       <td>{$row['gender']}</td>
-                      <td><span class='badge bg-".(
-                          $row['adoption_status']=='Available' ? 'success' : (
-                          $row['adoption_status']=='Adopted' ? 'secondary' : 'warning')
-                        )."'>{$row['adoption_status']}</span></td>
+                      <td><span class='badge bg-{$status_color}'>{$row['adoption_status']}</span></td>
                       <td>{$row['date_sheltered']}</td>
                       <td>
-                        <a href='edit_pet.php?id={$row['pet_id']}' class='btn btn-sm btn-warning'><i class='bi bi-pencil'></i></a>
-                        <a href='delete_pet.php?id={$row['pet_id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Delete this pet?\")'><i class='bi bi-trash'></i></a>
+                        <a href='edit_pet.php?id={$row['id']}' class='btn btn-sm btn-warning'><i class='bi bi-pencil'></i></a>
+                        <a href='delete_pet.php?id={$row['id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Delete this pet?\")'><i class='bi bi-trash'></i></a>
                       </td>
                     </tr>";
             }
@@ -191,9 +273,8 @@ if (isset($_POST['add_pet'])) {
     </div>
   </div>
 
-  <!-- Add Pet Modal -->
   <div class="modal fade" id="addPetModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content border-0 shadow-lg rounded-4">
         <div class="modal-header" style="background-color:#A9745B;color:white;">
           <h5 class="modal-title"><i class="bi bi-plus-circle"></i> Add New Pet</h5>
@@ -202,57 +283,18 @@ if (isset($_POST['add_pet'])) {
         <form method="POST" enctype="multipart/form-data">
           <div class="modal-body bg-light">
             <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Pet Name</label>
-                <input type="text" name="name" class="form-control" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Classification</label>
-                <select name="classification" class="form-select" required>
-                  <option value="Dog">Dog</option>
-                  <option value="Cat">Cat</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Breed</label>
-                <input type="text" name="breed" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Age</label>
-                <input type="text" name="age" class="form-control" placeholder="e.g. 2 years">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Gender</label>
-                <select name="gender" class="form-select"><option>Male</option><option>Female</option></select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Color</label>
-                <input type="text" name="color" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Health Status</label>
-                <input type="text" name="health_status" class="form-control" placeholder="e.g. Vaccinated, Healthy">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Temperament</label>
-                <input type="text" name="temperament" class="form-control" placeholder="e.g. Friendly, Calm">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Adoption Status</label>
-                <select name="adoption_status" class="form-select">
-                  <option>Available</option>
-                  <option>Adopted</option>
-                  <option>Pending</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Date Sheltered</label>
-                <input type="date" name="date_sheltered" class="form-control" required>
-              </div>
-              <div class="col-12">
-                <label class="form-label fw-semibold">Photo</label>
-                <input type="file" name="image" class="form-control" accept="image/*" required>
-              </div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Pet Name</label><input type="text" name="name" class="form-control" required></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Classification</label><select name="classification" class="form-select" required><option value="Dog">Dog</option><option value="Cat">Cat</option></select></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Breed</label><input type="text" name="breed" class="form-control"></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Age</label><input type="text" name="age" class="form-control" placeholder="e.g. 2 years"></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Gender</label><select name="gender" class="form-select"><option>Male</option><option>Female</option></select></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Color</label><input type="text" name="color" class="form-control"></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Health Status</label><input type="text" name="health_status" class="form-control" placeholder="e.g. Vaccinated, Healthy"></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Temperament</label><input type="text" name="temperament" class="form-control" placeholder="e.g. Friendly, Calm"></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Adoption Status</label><select name="adoption_status" class="form-select"><option>Available</option><option>Adopted</option><option>Pending</option></select></div>
+              <div class="col-md-6"><label class="form-label fw-semibold">Date Sheltered</label><input type="date" name="date_sheltered" class="form-control" required></div>
+              <div class="col-12"><label class="form-label fw-semibold">Description</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+              <div class="col-12"><label class="form-label fw-semibold">Photo</label><input type="file" name="image" class="form-control" accept="image/*" required></div>
             </div>
           </div>
           <div class="modal-footer bg-white">
@@ -264,12 +306,12 @@ if (isset($_POST['add_pet'])) {
     </div>
   </div>
 
-  <!-- Logout Confirmation Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow-lg rounded-4">
         <div class="modal-header" style="background-color:#A9745B; color:white;">
           <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right"></i> Confirm Logout</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">
           <p class="fw-semibold mb-3" style="color:#333;">Are you sure you want to log out?</p>
@@ -282,31 +324,85 @@ if (isset($_POST['add_pet'])) {
     </div>
   </div>
 
+  <div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+              <div class="modal-header" style="background-color:#A9745B; color:white;">
+                  <h5 class="modal-title" id="adminProfileModalLabel"><i class="bi bi-person-circle"></i> Admin Profile</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form method="POST">
+                  <input type="hidden" name="update_admin_profile" value="1">
+                  <div class="modal-body text-center bg-light">
+                      
+                      <i class="bi bi-person-circle" style="font-size: 60px; color: #A9745B;"></i>
+                      <h5 class="mt-2 mb-4 fw-bold"><?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></h5>
+                      
+                      <div class="mb-3 text-start">
+                          <label for="adminNameInput" class="form-label fw-semibold">Admin Name</label>
+                          <input type="text" name="admin_name" id="adminNameInput" class="form-control" value="<?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?>" required>
+                      </div>
+
+                      <h6 class="mt-4 mb-2 text-start fw-bold">Change Password</h6>
+                      
+                      <div class="mb-3 text-start">
+                          <label for="newPasswordInput" class="form-label">New Password</label>
+                          <input type="password" name="new_password" id="newPasswordInput" class="form-control" placeholder="Leave blank to keep current password">
+                      </div>
+                      <div class="mb-3 text-start">
+                          <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+                          <input type="password" name="confirm_password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password">
+                      </div>
+                  </div>
+                  
+                  <div class="modal-footer bg-white d-flex justify-content-end align-items-center">
+                      <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-save px-4">Save Changes</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const profileBtn = document.getElementById("profileBtn");
-const profileDropdown = document.getElementById("profileDropdown");
-profileBtn.addEventListener("click", () => {
-  profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
-});
-document.addEventListener("click", e => {
-  if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
-    profileDropdown.style.display = "none";
-  }
-});
+document.addEventListener("DOMContentLoaded", function() {
+  
+  // Profile Dropdown Logic
+  const profileBtn = document.getElementById("profileBtn");
+  const profileDropdown = document.getElementById("profileDropdown");
+  const viewProfileLink = document.querySelector('.view-profile-link'); 
 
-document.addEventListener("DOMContentLoaded", () => {
+  if (profileBtn) {
+      profileBtn.addEventListener("click", () => {
+        profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+      });
+  }
+
+  if (viewProfileLink) {
+      viewProfileLink.addEventListener('click', () => {
+          profileDropdown.style.display = 'none';
+      });
+  }
+
+  document.addEventListener("click", e => {
+    if (profileBtn && !profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+      profileDropdown.style.display = "none";
+    }
+  });
+  
+  // Add Pet Modal Initialization
   const modalElement = document.getElementById("addPetModal");
   const openButton = document.getElementById("openAddPet");
   if (modalElement && openButton) {
     const addPetModal = new bootstrap.Modal(modalElement);
     openButton.addEventListener("click", () => addPetModal.show());
   }
-});
 
-// ✅ Logout redirect
-document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
-  window.location.href = 'logout.php';
+  // Logout Confirmation Logic
+  document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+    window.location.href = 'logout.php';
+  });
 });
 </script>
 </body>

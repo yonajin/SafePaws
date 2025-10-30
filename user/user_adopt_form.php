@@ -32,25 +32,13 @@ if (!$pet) {
   <title>Adoption Form - SafePaws</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Poppins', sans-serif; }
-    .navbar { background-color: #A9745B !important; height: 70px; }
-    .navbar .nav-link, .navbar .navbar-brand { color: #FFFFFF !important; }
-    .navbar .nav-link:hover, .navbar .navbar-brand:hover { color: #ffe6d5 !important; }
-    .navbar-brand { font-family: 'Quicksand', sans-serif; color: #FFF8F3 !important; font-weight: 700; font-size: 40px; }
-    .navbar .nav-link { font-family: 'Poppins', sans-serif; color: #FFF8F3 !important; font-weight: 500; font-size: 17px; margin-left: 20px; }
-    .container { max-width: 800px; background: #fff; border-radius: 15px; padding: 30px; margin: 40px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    h2 { color: #f47b50; text-align: center; margin-bottom: 25px; }
-    .btn-submit { background-color: #f47b50; color: #fff; border: none; }
-    .btn-submit:hover { background-color: #e06d44; }
-  </style>
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 
 <?php include('../includes/user_navbar.php'); ?>
 
-<div class="container">
+<div class="container_form">
   <h2>Adoption Form for <?= htmlspecialchars($pet['name']) ?></h2>
   <p class="text-muted text-center">Fields marked with * are required</p>
 
@@ -61,7 +49,7 @@ if (!$pet) {
     <input type="hidden" name="pet_name" value="<?= htmlspecialchars($pet['name']) ?>">
     <input type="hidden" name="classification" value="<?= htmlspecialchars($pet['classification']) ?>">
 
-    <h5 class="mt-4">Applicant’s Information</h5>
+    <h5 class="mt-4 mb-4" style="text-align: center;">Applicant’s Information</h5>
     <div class="row">
       <div class="col-md-6 mb-3">
         <label class="form-label">First Name *</label>
@@ -138,6 +126,8 @@ if (!$pet) {
     </div>
   </form>
 </div>
+
+<?php include('../includes/footer.php'); ?>
 
 </body>
 </html>
