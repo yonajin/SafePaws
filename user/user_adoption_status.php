@@ -37,36 +37,8 @@ $result = $stmt->get_result();
   <title>My Adoption Requests - SafePaws</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #fff8f3;
-    }
-    .navbar {
-      background-color: #A9745B !important;
-      height: 70px;
-    }
-    .navbar .nav-link,
-    .navbar .navbar-brand {
-      color: #FFFFFF !important;
-    }
-    .navbar .nav-link:hover,
-    .navbar .navbar-brand:hover {
-      color: #ffe6d5 !important;
-    }
-    .navbar-brand {
-      font-family: 'Quicksand', sans-serif;
-      color: #FFF8F3 !important;
-      font-weight: 700;
-      font-size: 40px;
-    }
-    .navbar .nav-link {
-      font-family: 'Poppins', sans-serif;
-      color: #FFF8F3 !important;
-      font-weight: 500;
-      font-size: 17px;
-      margin-left: 20px;
-    }
     .container {
       margin-top: 70px;
     }
@@ -89,24 +61,25 @@ $result = $stmt->get_result();
   <div class="card p-4">
     <h3 class="text-center mb-4">My Adoption Requests</h3>
 
-    <div class="table-responsive">
-      <table class="table table-striped text-center align-middle">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Pet ID</th>
-            <th>Pet Name</th>
-            <th>Applicant Name</th>
-            <th>Classification</th>
-            <th>Status</th>
-            <th>Date Requested</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
+<div class="table-responsive">
+<table class="table table-striped text-center align-middle">
+<thead class="table-light">
+<tr>
+<th>#</th>
+<th>Pet ID</th>
+<th>Pet Name</th>
+<th>Applicant Name</th>
+<th>Classification</th>
+<th>Status</th>
+<th>Date Requested</th>
+</tr>
+</thead>
+<tbody>
+<?php
           if ($result->num_rows > 0) {
               $i = 1;
               while ($row = $result->fetch_assoc()) {
+                  echo "TEST";
                   $statusClass = '';
                   if ($row['status'] == 'Pending') $statusClass = 'status-pending';
                   elseif ($row['status'] == 'Approved') $statusClass = 'status-approved';
@@ -127,10 +100,10 @@ $result = $stmt->get_result();
               echo "<tr><td colspan='7' class='text-muted'>You haven’t submitted any adoption requests yet.</td></tr>";
           }
           ?>
-        </tbody>
-      </table>
-    </div>
-  </div>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 
 </body>
