@@ -3,13 +3,31 @@ include '../config/db.php'; // Ensure this path is correct for your setup
 session_start();
 
 // SECURITY CHECK & ADMIN SESSION SETUP
+// Redirect to admin_login.php if the admin_logged_in flag is not set
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: admin_dashboard.php");
+    exit();
+}
+
+// Ensure admin_name is set for display
 if (!isset($_SESSION['admin_name'])) {
-    // Attempt to set a default admin name if not logged in
-    $result_admin = mysqli_query($conn, "SELECT name FROM admin WHERE id = 1");
-    if ($result_admin && $row_admin = mysqli_fetch_assoc($result_admin)) {
-        $_SESSION['admin_name'] = $row_admin['name'];
+    // FIX: Using 'full_name' column and 'user_id' from session (assuming admin is a user with role='admin')
+    // NOTE: This logic assumes admin is a user in the 'users' table, but the rest of your code
+    // is structured around a separate 'admin' table with 'admin_id'. We will stick to the 
+    // separate admin logic here for consistency with your existing conflict markers.
+    
+    // We will query the 'users' table for the admin name using the logged in user_id, 
+    // as the admin login uses the 'users' table.
+    if (isset($_SESSION['user_id'])) {
+        $user_id_check = $_SESSION['user_id'];
+        $result_admin = mysqli_query($conn, "SELECT full_name FROM users WHERE user_id = '$user_id_check'");
+        if ($result_admin && $row_admin = mysqli_fetch_assoc($result_admin)) {
+            $_SESSION['admin_name'] = $row_admin['full_name'];
+        } else {
+            $_SESSION['admin_name'] = "Admin"; 
+        }
     } else {
-        $_SESSION['admin_name'] = "Admin"; 
+        $_SESSION['admin_name'] = "Admin";
     }
 }
 
@@ -32,7 +50,8 @@ $res_requests = mysqli_query($conn, $sql_requests);
 $data_requests = mysqli_fetch_assoc($res_requests);
 
 // --- User Count (Requires 'users' table) ---
-$sql_users = "SELECT COUNT(*) AS total_users FROM users WHERE status != 'Admin'";
+// Remote change is kept to exclude admin accounts from the general user count
+$sql_users = "SELECT COUNT(*) AS total_users FROM users WHERE role != 'admin'";
 $res_users = mysqli_query($conn, $sql_users);
 $data_users = mysqli_fetch_assoc($res_users);
 
@@ -50,18 +69,18 @@ if ($total_requests > 0) {
     $adoption_rate = number_format(($approved_adoptions / $total_requests) * 100, 1);
 }
 
-
 // ADMIN PROFILE UPDATE HANDLER (For Top Bar Modal)
 if (isset($_POST['update_admin_profile'])) {
     $admin_name = trim($_POST['admin_name']);
-    $admin_id = 1; 
+    $user_id_to_update = $_SESSION['user_id']; // Use the ID from the session
     $msg = "";
     
     // --- Name Update Logic (Using Prepared Statements for security) ---
-    $sql_name = "UPDATE admin SET name = ? WHERE id = ?";
+    // FIX: Update the 'users' table using the correct column names
+    $sql_name = "UPDATE users SET full_name = ? WHERE user_id = ?";
     $stmt_name = mysqli_prepare($conn, $sql_name);
     if ($stmt_name) {
-        mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $admin_id);
+        mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $user_id_to_update);
         if (mysqli_stmt_execute($stmt_name)) {
             $_SESSION['admin_name'] = $admin_name; 
             $msg .= "Profile name updated successfully! ";
@@ -75,10 +94,11 @@ if (isset($_POST['update_admin_profile'])) {
     if (!empty($_POST['new_password'])) {
         if ($_POST['new_password'] === $_POST['confirm_password']) {
             $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-            $sql_pass = "UPDATE admin SET password = ? WHERE id = ?";
+            // FIX: Updated table and WHERE clause to match 'users' table
+            $sql_pass = "UPDATE users SET password = ? WHERE user_id = ?";
             $stmt_pass = mysqli_prepare($conn, $sql_pass);
             if ($stmt_pass) {
-                mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $admin_id);
+                mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $user_id_to_update);
                 if (mysqli_stmt_execute($stmt_pass)) {
                     $msg .= " Password updated successfully!";
                 } else {
@@ -209,14 +229,13 @@ if (isset($_POST['update_admin_profile'])) {
           <div class="p-3">
               <p class="text-muted small">Displaying the 5 most recently registered users:</p>
               <?php
-              // FIX APPLIED: Using date_registered instead of created_at
-              $sql_recent_users = "SELECT full_name, email, date_registered FROM users WHERE status != 'Admin' ORDER BY date_registered DESC LIMIT 5";
+              // FIX APPLIED: Use the correct table and column names for the query
+              $sql_recent_users = "SELECT full_name, email, date_registered FROM users WHERE role != 'admin' ORDER BY date_registered DESC LIMIT 5";
               $res_recent_users = mysqli_query($conn, $sql_recent_users);
               
               if ($res_recent_users && mysqli_num_rows($res_recent_users) > 0) {
                   echo '<ul class="list-group list-group-flush">';
                   while ($user = mysqli_fetch_assoc($res_recent_users)) {
-                      // FIX APPLIED: Using $user['date_registered']
                       $time_ago = time() - strtotime($user['date_registered']);
                       $minutes = round(abs($time_ago) / 60);
                       $display_time = ($minutes < 60) ? "{$minutes}m ago" : date('M d, H:i', strtotime($user['date_registered']));
@@ -326,7 +345,8 @@ if (isset($_POST['update_admin_profile'])) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
-      window.location.href = 'logout.php';
+      // FIX: Ensure this points to the admin logout script
+      window.location.href = 'admin_logout.php'; 
     });
 
     // Profile Dropdown Logic

@@ -8,9 +8,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id']; // Get logged-in user ID
 
-$stmt = $conn->prepare("
+// ✅ Use mysqli_query() style
+$sql = "
     SELECT 
         ar.request_id,
         ar.pet_id,
@@ -20,13 +21,11 @@ $stmt = $conn->prepare("
         ar.status,
         ar.request_date
     FROM adoption_requests ar
-    WHERE ar.user_id = ?
+    WHERE ar.user_id = '$user_id'
     ORDER BY ar.request_date DESC
-");
+";
 
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
+$result = mysqli_query($conn, $sql); // ✅ now same as your first code
 ?>
 
 <!DOCTYPE html>
@@ -39,6 +38,10 @@ $result = $stmt->get_result();
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
   <style>
+    body {
+      background-color: #fff8f3;
+      font-family: 'Poppins', sans-serif;
+    }
     .container {
       margin-top: 70px;
     }
@@ -61,25 +64,24 @@ $result = $stmt->get_result();
   <div class="card p-4">
     <h3 class="text-center mb-4">My Adoption Requests</h3>
 
-<div class="table-responsive">
-<table class="table table-striped text-center align-middle">
-<thead class="table-light">
-<tr>
-<th>#</th>
-<th>Pet ID</th>
-<th>Pet Name</th>
-<th>Applicant Name</th>
-<th>Classification</th>
-<th>Status</th>
-<th>Date Requested</th>
-</tr>
-</thead>
-<tbody>
-<?php
-          if ($result->num_rows > 0) {
+    <div class="table-responsive">
+      <table class="table table-striped text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Pet ID</th>
+            <th>Pet Name</th>
+            <th>Applicant Name</th>
+            <th>Classification</th>
+            <th>Status</th>
+            <th>Date Requested</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          if (mysqli_num_rows($result) > 0) {
               $i = 1;
-              while ($row = $result->fetch_assoc()) {
-                  echo "TEST";
+              while ($row = mysqli_fetch_assoc($result)) {
                   $statusClass = '';
                   if ($row['status'] == 'Pending') $statusClass = 'status-pending';
                   elseif ($row['status'] == 'Approved') $statusClass = 'status-approved';
@@ -100,11 +102,12 @@ $result = $stmt->get_result();
               echo "<tr><td colspan='7' class='text-muted'>You haven’t submitted any adoption requests yet.</td></tr>";
           }
           ?>
-</tbody>
-</table>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
-</div>
-</div>
+
 
 </body>
 </html>

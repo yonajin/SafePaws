@@ -1,10 +1,9 @@
 <?php
 include('../config/db.php');
-session_start();
 
 $pending_count = 0;
 
-if (isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 
     $query = "SELECT COUNT(*) AS total FROM adoption_requests 
