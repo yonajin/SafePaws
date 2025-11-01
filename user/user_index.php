@@ -28,7 +28,7 @@ include('../config/db.php');
 
 <!-- 🐾 Meet Our Pets -->
 <section class="container text-center py-5">
-  <h2 class="section-title mb-4">Meet Our Lovely Pets</h2>
+  <h2 class="section-title mb-4" style="color: #2e2e2e;">Meet Our Lovely Pets</h2>
 
   <div class="row g-4" id="pets-container">
     <?php
@@ -62,18 +62,18 @@ include('../config/db.php');
 
 </section>
 
-<!-- Donation Section -->
+<!-- Care Tips Section -->
 <section class="container text-center py-5">
   <div class="p-5 rounded-4 shadow-sm" style="background-color: #fff6f1; margin-bottom: 20px;">
-    <h2 class="section-title">Support Our Mission</h2>
+    <h2 class="section-title">Care Tips for Pets</h2>
     <p class="mx-auto" style="max-width:700px;">
-      Your donation plays a vital role in sustaining SafePaws’ rescue, rehabilitation, and adoption programs.
-      Every contribution directly funds essential veterinary care, shelter maintenance, and community outreach
-      initiatives that promote responsible pet ownership. With your support, we can continue improving the
-      welfare of animals and creating lasting, positive change within our communities.
+      Discover helpful tips and best practices to keep your pets happy, healthy, and safe. 
+      From proper nutrition and grooming to training and wellness routines, our care guides 
+      are designed to help every pet owner provide the love and attention their furry friends deserve. 
+      Learn how small, thoughtful actions can make a big difference in your pet’s life.
     </p>
-    <a href="user_donations.php" class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
-      Donate Now
+    <a href="user_care_tips.php" class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
+      View Care Tips
     </a>
   </div>
 </section>
@@ -83,7 +83,7 @@ include('../config/db.php');
 <section class="container py-5 border-top border-bottom">
   <div class="row align-items-center">
     <div class="col-md-7">
-      <h2 class="section-title">About SafePaws</h2>
+      <h2 class="section-title" style="color: #2e2e2e;">About SafePaws</h2>
       <p>
         Learn more about our work, compassionate caregiving, and dedication to animal welfare.
         At SafePaws, we strive to rescue, rehabilitate, and rehome stray and abandoned pets.
@@ -99,7 +99,7 @@ include('../config/db.php');
 
 <!-- Contact Section -->
 <section class="container py-5">
-  <h2 class="section-title text-center">Contact Us</h2>
+  <h2 class="section-title text-center" style="color: #2e2e2e;">Contact Us</h2>
   <form class="mx-auto" style="max-width:600px;">
     <div class="row mb-3">
       <div class="col"><input type="text" class="form-control" placeholder="Your Name"></div>

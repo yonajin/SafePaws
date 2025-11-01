@@ -14,7 +14,7 @@
 
 <!-- Contact Section -->
 <section class="container py-5">
-  <h2 class="section-title text-center">Contact Safe Paws</h2>
+  <h2 class="section-title text-center" style="color: #2e2e2e;">Contact Safe Paws</h2>
   <form class="mx-auto" style="max-width:600px;">
     <div class="row mb-3">
       <div class="col"><input type="text" class="form-control" placeholder="Your Name"></div>
@@ -33,18 +33,18 @@
   </form>
 </section>
 
-<!-- Donation Section -->
+<!-- Care Tips Section -->
 <section class="container text-center py-5">
   <div class="p-5 rounded-4 shadow-sm" style="background-color: #fff6f1; margin-bottom: 20px;">
-    <h2 class="section-title">Support Our Mission</h2>
+    <h2 class="section-title">Care Tips for Pets</h2>
     <p class="mx-auto" style="max-width:700px;">
-      Your donation plays a vital role in sustaining SafePaws’ rescue, rehabilitation, and adoption programs.
-      Every contribution directly funds essential veterinary care, shelter maintenance, and community outreach
-      initiatives that promote responsible pet ownership. With your support, we can continue improving the
-      welfare of animals and creating lasting, positive change within our communities.
+      Discover helpful tips and best practices to keep your pets happy, healthy, and safe. 
+      From proper nutrition and grooming to training and wellness routines, our care guides 
+      are designed to help every pet owner provide the love and attention their furry friends deserve. 
+      Learn how small, thoughtful actions can make a big difference in your pet’s life.
     </p>
-    <a href="donations.php" class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
-      Donate Now
+    <a href="care_tips.php" class="btn btn-primary mt-3" style="background-color:#f8a488; border:none;">
+      View Care Tips
     </a>
   </div>
 </section>
