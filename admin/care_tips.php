@@ -553,7 +553,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Logout Confirmation Logic
     document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
-      window.location.href = 'logout.php';
+      window.location.href = 'admin_logout.php';
     });
 
     // Edit Tip Modal Logic (Fetches data via AJAX/Fetch)
