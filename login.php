@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +23,18 @@
       padding: 40px;
       width: 100%;
       max-width: 400px;
+      text-align: center;
+    }
+    .brand-name {
+      font-size: 32px;
+      font-weight: 800;
+      color: #a9745b;
+      margin-bottom: 10px;
+    }
+    .brand-subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 25px;
     }
     .login-title {
       font-weight: 700;
@@ -57,18 +71,27 @@
     .register-link a:hover {
       text-decoration: underline;
     }
+    img.logo {
+      width: 80px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
 
   <div class="login-card">
+    <!-- 🐾 SafePaws Brand Header -->
+    <div class="brand-name">SafePaws</div>
+    <div class="brand-subtitle">Where Every Paw Finds a Home</div>
+
     <h3 class="login-title">Welcome Back!</h3>
+
     <form action="config/login_process.php" method="POST">
-      <div class="mb-3">
+      <div class="mb-3 text-start">
         <label for="email" class="form-label">Email Address</label>
         <input type="email" class="form-control" id="email" name="email" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-3 text-start">
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="password" name="password" required>
       </div>

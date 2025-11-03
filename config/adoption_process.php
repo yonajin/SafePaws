@@ -29,6 +29,7 @@ if (isset($_POST['submit'])) {
     $pet_id         = intval($_POST['pet_id']); // ✅ ensure integer
     $pet_name       = mysqli_real_escape_string($conn, $_POST['pet_name']);
 
+
     // ✅ Double-check that pet_id exists
     if (empty($pet_id)) {
         echo "<script>alert('Pet ID is missing. Please select a pet again.'); window.location='../user/user_adopt.php';</script>";

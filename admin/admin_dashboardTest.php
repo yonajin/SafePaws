@@ -2,12 +2,18 @@
 include '../config/db.php'; 
 session_start();
 
-// ✅ Ensure admin_name and admin_id are set
-if (!isset($_SESSION['admin_name']) && isset($_SESSION['admin_id'])) {
-    $admin_id = $_SESSION['admin_id'];
-    $result_admin = mysqli_query($conn, "SELECT admin_name FROM admin WHERE admin_id = '$admin_id'");
+// If admin is NOT logged in, redirect them to the admin login page.
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: ../login.php"); 
+    exit();
+}
+
+// Ensure admin_name and user_id are set for display and update logic
+if (!isset($_SESSION['admin_name']) && isset($_SESSION['user_id'])) {
+    $user_id_check = $_SESSION['user_id'];
+    $result_admin = mysqli_query($conn, "SELECT full_name FROM users WHERE user_id = '$user_id_check'");
     if ($result_admin && $row_admin = mysqli_fetch_assoc($result_admin)) {
-        $_SESSION['admin_name'] = $row_admin['admin_name'];
+        $_SESSION['admin_name'] = $row_admin['full_name'];
     } else {
         $_SESSION['admin_name'] = "Admin"; 
     }
@@ -15,29 +21,32 @@ if (!isset($_SESSION['admin_name']) && isset($_SESSION['admin_id'])) {
     $_SESSION['admin_name'] = "Admin";
 }
 
-// ✅ Flash message handler
+// Initialize Message/Status variables for display after redirect
 $message = $_SESSION['dashboard_message'] ?? '';
 $message_type = $_SESSION['dashboard_message_type'] ?? '';
-unset($_SESSION['dashboard_message'], $_SESSION['dashboard_message_type']);
 
-// ✅ Handle profile update
+// Clear session variables after retrieving them so they don't reappear on refresh
+unset($_SESSION['dashboard_message']);
+unset($_SESSION['dashboard_message_type']);
+
+
 if (isset($_POST['update_admin_profile'])) {
     $admin_name = trim($_POST['admin_name']);
-    $admin_id_to_update = $_SESSION['admin_id'] ?? 0;
+    $user_id_to_update = $_SESSION['user_id'] ?? 0;
     $msg = "";
     $success = true;
 
-    if ($admin_id_to_update == 0) {
-        $msg = "Error: Admin ID not found in session.";
+    if ($user_id_to_update == 0) {
+        $msg = "Error: Admin User ID not found in session.";
         $success = false;
     }
 
     if ($success) {
-        // --- Update name ---
-        $sql_name = "UPDATE admin SET admin_name = ? WHERE admin_id = ?";
+        // --- Name Update Logic ---
+        $sql_name = "UPDATE users SET full_name = ? WHERE user_id = ?";
         $stmt_name = mysqli_prepare($conn, $sql_name);
         if ($stmt_name) {
-            mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $admin_id_to_update);
+            mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $user_id_to_update);
             if (mysqli_stmt_execute($stmt_name)) {
                 $_SESSION['admin_name'] = $admin_name; 
                 $msg .= "Profile name updated successfully! ";
@@ -47,20 +56,20 @@ if (isset($_POST['update_admin_profile'])) {
             }
             mysqli_stmt_close($stmt_name);
         } else {
-            $msg .= "Database error on name update.";
-            $success = false;
+             $msg .= "Database error on name update.";
+             $success = false;
         }
 
-        // --- Update password if provided ---
+        // --- Password Change Logic ---
         if (!empty($_POST['new_password'])) {
             if ($_POST['new_password'] === $_POST['confirm_password']) {
                 $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-                $sql_pass = "UPDATE admin SET password = ? WHERE admin_id = ?";
+                $sql_pass = "UPDATE users SET password = ? WHERE user_id = ?";
                 $stmt_pass = mysqli_prepare($conn, $sql_pass);
                 if ($stmt_pass) {
-                    mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $admin_id_to_update);
+                    mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $user_id_to_update);
                     if (mysqli_stmt_execute($stmt_pass)) {
-                        $msg .= "Password updated successfully!";
+                        $msg .= " Password updated successfully!";
                     } else {
                         $msg .= " Error updating password: " . mysqli_stmt_error($stmt_pass);
                         $success = false;
@@ -71,12 +80,13 @@ if (isset($_POST['update_admin_profile'])) {
                     $success = false;
                 }
             } else {
-                $msg .= " Error: Passwords do not match.";
-                $success = false;
+                 $msg .= " Error: Passwords do not match.";
+                 $success = false;
             }
         }
     }
     
+    // Use session variables for flash messages and redirect using header
     $_SESSION['dashboard_message'] = $msg;
     $_SESSION['dashboard_message_type'] = $success ? 'success' : 'danger';
     
@@ -84,12 +94,14 @@ if (isset($_POST['update_admin_profile'])) {
     exit();
 }
 
-// ✅ Pet Counts
-$sql_pets = "SELECT COUNT(CASE WHEN adoption_status = 'Available' THEN 1 END) AS available_pets FROM pets";
+// --- Pet Counts (Requires 'pets' table) ---
+$sql_pets = "SELECT 
+                COUNT(CASE WHEN adoption_status = 'Available' THEN 1 END) AS available_pets
+             FROM pets";
 $res_pets = mysqli_query($conn, $sql_pets);
 $data_pets = mysqli_fetch_assoc($res_pets);
 
-// ✅ Adoption Requests
+// --- Adoption Request Counts & TOTAL ---
 $sql_requests = "SELECT 
                     COUNT(CASE WHEN status = 'Pending' THEN 1 END) AS pending_requests,
                     COUNT(CASE WHEN status = 'Approved' THEN 1 END) AS approved_adoptions,
@@ -98,22 +110,25 @@ $sql_requests = "SELECT
 $res_requests = mysqli_query($conn, $sql_requests);
 $data_requests = mysqli_fetch_assoc($res_requests);
 
-// ✅ User Count
-$sql_users = "SELECT COUNT(*) AS total_users FROM users";
+// --- User Count (Requires 'users' table) ---
+$sql_users = "SELECT COUNT(*) AS total_users FROM users WHERE role != 'admin'";
 $res_users = mysqli_query($conn, $sql_users);
 $data_users = mysqli_fetch_assoc($res_users);
 
-// ✅ Assign variables
+
+// Assign variables
 $available_pets = $data_pets['available_pets'] ?? 0;
 $pending_requests = $data_requests['pending_requests'] ?? 0;
 $approved_adoptions = $data_requests['approved_adoptions'] ?? 0;
 $total_requests = $data_requests['total_requests'] ?? 0;
 $total_users = $data_users['total_users'] ?? 0; 
 
-// ✅ Adoption Rate
-$adoption_rate = $total_requests > 0 ? number_format(($approved_adoptions / $total_requests) * 100, 1) : 0;
+// --- CALCULATE ADOPTION RATE ---
+$adoption_rate = 0;
+if ($total_requests > 0) {
+    $adoption_rate = number_format(($approved_adoptions / $total_requests) * 100, 1);
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,7 +172,26 @@ $adoption_rate = $total_requests > 0 ? number_format(($approved_adoptions / $tot
 </head>
 <body>
 
-<?php include('../includes/admin_header.php'); ?>
+  <div class="sidebar">
+    <h2>SafePaws</h2> 
+    <nav class="nav flex-column text-start w-100">
+      <a href="admin_dashboard.php" class="nav-link active"><i class="bi bi-house-door me-2"></i> Dashboard</a>
+      <a href="manage_pets.php" class="nav-link"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
+      <a href="adoption_requests.php" class="nav-link"><i class="bi bi-envelope-check me-2"></i> Adoption Requests</a>
+      <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
+      <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
+      <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
+    </nav>
+  </div>
+
+  <div class="topbar">
+    <i id="profileBtn" class="bi bi-person-circle"></i>
+    <div id="profileDropdown" class="profile-dropdown">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal" class="view-profile-link"><i class="bi bi-person"></i> View Profile</a>
+        <hr class="m-0">
+        <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal" id="dropdownLogoutLink"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+  </div>
 
   <div class="main-content">
     <h3 class="mb-4 fw-bold" style="color:#A9745B;">Welcome, <?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></h3>
@@ -238,35 +272,6 @@ $adoption_rate = $total_requests > 0 ? number_format(($approved_adoptions / $tot
               ?>
               <a href="users.php" class="btn btn-sm btn-outline-secondary w-100 mt-3">View All Users</a>
           </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card p-4 h-100 d-flex flex-column justify-content-between" style="background-color:#fff6f1;">
-          <h5 class="fw-semibold text-center" style="color:#A9745B;">
-              📈 Overall Adoption Rate
-          </h5>
-          
-          <div class="text-center my-4">
-              <div class="value" style="font-size: 64px; color:#A9745B;"><?php echo $adoption_rate; ?>%</div>
-              <p class="text-muted fw-semibold">Successful Adoptions vs. Total Requests</p>
-          </div>
-
-          <div class="row text-center border-top pt-3">
-              <div class="col-4">
-                  <small class="text-muted d-block">Total Requests</small>
-                  <strong class="text-dark"><?php echo $total_requests; ?></strong>
-              </div>
-              <div class="col-4">
-                  <small class="text-muted d-block">Approved</small>
-                  <strong class="text-success"><?php echo $approved_adoptions; ?></strong>
-              </div>
-              <div class="col-4">
-                  <small class="text-muted d-block">Pending</small>
-                  <strong class="text-warning"><?php echo $pending_requests; ?></strong>
-              </div>
-          </div>
-          
         </div>
       </div>
 
