@@ -1,6 +1,10 @@
 <?php
 include('../config/db.php');
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $pending_count = 0;
 
 if (!isset($_SESSION['user_id'])) {

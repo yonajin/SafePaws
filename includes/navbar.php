@@ -1,3 +1,9 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
   <a class="navbar-brand" href="index.php">SafePaws</a>
