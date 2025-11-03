@@ -1,16 +1,24 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include '../config/db.php';
 session_start();
 
-// SECURITY CHECK: ENSURE ADMIN IS LOGGED IN
+// Flash message handler: Load, then clear session variables
+$message = $_SESSION['adoption_message'] ?? '';
+$message_type = $_SESSION['adoption_message_type'] ?? '';
+unset($_SESSION['adoption_message'], $_SESSION['adoption_message_type']);
 
+// SECURITY CHECK: ENSURE ADMIN IS LOGGED IN & SET SESSION NAME
 if (!isset($_SESSION['admin_name'])) {
-    // Attempt to fetch admin name if session is missing but user might be valid (e.g., initial load)
+    // This assumes the admin ID is 1 or can be determined otherwise.
     $result = mysqli_query($conn, "SELECT name FROM admin WHERE id = 1");
     if ($result && $row = mysqli_fetch_assoc($result)) {
         $_SESSION['admin_name'] = $row['name'];
     } else {
-        // Fallback for UI consistency if actual authentication is missing
         $_SESSION['admin_name'] = "Admin"; 
     }
 }
@@ -20,19 +28,27 @@ if (!isset($_SESSION['admin_name'])) {
 if (isset($_POST['update_status'])) {
     $request_id = filter_var($_POST['request_id'], FILTER_VALIDATE_INT);
     $new_status = trim($_POST['new_status']);
+    $success = false;
+    $msg = '❌ Error updating request status.';
     
     // Basic status validation
     if ($request_id && in_array($new_status, ['Approved', 'Denied', 'Pending'])) {
         
-        $sql = "UPDATE adoption_requests SET status = ? WHERE id = ?";
+        // NOTE: Uses 'request_id' as the primary key column
+        $sql = "UPDATE adoption_requests SET status = ? WHERE request_id = ?"; 
         $stmt = mysqli_prepare($conn, $sql);
         
         if ($stmt) {
             mysqli_stmt_bind_param($stmt, "si", $new_status, $request_id);
-            mysqli_stmt_execute($stmt);
+            if (mysqli_stmt_execute($stmt)) {
+                $msg = "✅ Request ID {$request_id} successfully marked as **{$new_status}**.";
+                $success = true;
+            }
             mysqli_stmt_close($stmt);
         }
     }
+    $_SESSION['adoption_message'] = $msg;
+    $_SESSION['adoption_message_type'] = $success ? 'success' : 'danger';
     header("Location: adoption_requests.php");
     exit();
 }
@@ -41,26 +57,33 @@ if (isset($_POST['update_status'])) {
 
 if (isset($_POST['delete_request'])) {
     $request_id = filter_var($_POST['request_id'], FILTER_VALIDATE_INT);
+    $success = false;
+    $msg = '❌ Error deleting request.';
     
     if ($request_id) {
-        $sql = "DELETE FROM adoption_requests WHERE id = ?";
+        // NOTE: Uses 'request_id' as the primary key column
+        $sql = "DELETE FROM adoption_requests WHERE request_id = ?";
         $stmt = mysqli_prepare($conn, $sql);
         
         if ($stmt) {
             mysqli_stmt_bind_param($stmt, "i", $request_id);
-            mysqli_stmt_execute($stmt);
+            if (mysqli_stmt_execute($stmt)) {
+                 $msg = "🗑️ Request ID {$request_id} deleted successfully.";
+                 $success = true;
+            }
             mysqli_stmt_close($stmt);
         }
     }
+    $_SESSION['adoption_message'] = $msg;
+    $_SESSION['adoption_message_type'] = $success ? 'success' : 'danger';
     header("Location: adoption_requests.php");
     exit();
 }
 
-// SECURE LOGIC: ADMIN PROFILE UPDATE
-
+// === REFINED SECURE LOGIC: ADMIN PROFILE UPDATE ===
 if (isset($_POST['update_admin_profile'])) {
     $admin_name = trim($_POST['admin_name']);
-    $admin_id = 1; 
+    $admin_id = 1; // Assuming admin ID is hardcoded to 1
     $msg = "";
     $success = true;
 
@@ -83,7 +106,7 @@ if (isset($_POST['update_admin_profile'])) {
     }
 
     // Handle Password Change
-    if (!empty($_POST['new_password'])) {
+    if ($success && !empty($_POST['new_password'])) {
         if ($_POST['new_password'] === $_POST['confirm_password']) {
             $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
             
@@ -108,10 +131,13 @@ if (isset($_POST['update_admin_profile'])) {
         }
     }
     
-    // Alert message and then redirect to reload the page state
-    echo "<script>alert('{$msg}'); window.location='adoption_requests.php';</script>";
+    // Use session flash message instead of alert box
+    $_SESSION['adoption_message'] = $msg;
+    $_SESSION['adoption_message_type'] = $success ? 'success' : 'danger';
+    header('location: adoption_requests.php');
     exit();
 }
+// === END REFINED LOGIC ===
 
 ?>
 
@@ -152,7 +178,6 @@ tbody tr:hover { background-color:#f1edea; transition:0.2s; }
 .btn-save { background-color: #A9745B; color: white; }
 .btn-save:hover { background-color: #8e5f47; }
 
-/* === CRITICAL FIX FOR MODAL CORNERS === */
 .modal-header {
   border-top-left-radius: 0.75rem !important;
   border-top-right-radius: 0.75rem !important;
@@ -185,6 +210,13 @@ tbody tr:hover { background-color:#f1edea; transition:0.2s; }
 <div class="main-content">
 <h3 class="fw-bold mb-4" style="color:#A9745B;">🐾 Adoption Requests</h3>
 
+<?php if ($message): // Display flash message if session message exists ?>
+    <div class="alert alert-<?php echo htmlspecialchars($message_type); ?> alert-dismissible fade show" role="alert">
+    <?php echo htmlspecialchars($message); ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
 <div class="table-responsive shadow-sm bg-white rounded p-3">
 <table class="table align-middle">
 <thead>
@@ -199,16 +231,17 @@ tbody tr:hover { background-color:#f1edea; transition:0.2s; }
 </thead>
 <tbody>
 <?php
-// DATA FETCH: CORRECTED to use full table names in the SELECT and JOIN clauses for clarity.
+// DATA FETCH: Fetch adoption requests, joining with pets table and the users table for the full name.
 $sql = "SELECT 
-            adoption_requests.id, 
-            adoption_requests.user_name, 
-            adoption_requests.status, 
-            adoption_requests.request_date, 
-            p.name AS pet_name 
-        FROM adoption_requests
-        JOIN pets p ON adoption_requests.pet_id = p.id 
-        ORDER BY adoption_requests.request_date DESC";
+            ar.request_id, 
+            ar.status, 
+            ar.request_date, 
+            p.name AS pet_name,
+            u.full_name AS customer_name
+        FROM adoption_requests ar
+        JOIN pets p ON ar.pet_id = p.pet_id 
+        JOIN users u ON ar.user_id = u.user_id /* CRITICAL: Join users table using user_id */
+        ORDER BY ar.request_date DESC";
 
 $result = mysqli_query($conn, $sql);
 
@@ -222,15 +255,15 @@ if(mysqli_num_rows($result) > 0){
         };
         
         echo "<tr>
-        <td>{$row['id']}</td>
-        <td>{$row['user_name']}</td>
+        <td>{$row['request_id']}</td> 
+        <td>{$row['customer_name']}</td> 
         <td>{$row['pet_name']}</td>
         <td><span class='badge bg-{$status_color}'>{$row['status']}</span></td>
         <td>{$row['request_date']}</td>
         <td>
-            <button class='btn btn-sm btn-success btn-action' data-bs-toggle='modal' data-bs-target='#statusModal' data-id='{$row['id']}' data-status='Approved'>Approve</button>
-            <button class='btn btn-sm btn-warning btn-action' data-bs-toggle='modal' data-bs-target='#statusModal' data-id='{$row['id']}' data-status='Denied'>Deny</button>
-            <button class='btn btn-sm btn-danger btn-action' data-bs-toggle='modal' data-bs-target='#deleteModal' data-id='{$row['id']}'>Delete</button>
+            <button class='btn btn-sm btn-success btn-action' data-bs-toggle='modal' data-bs-target='#statusModal' data-id='{$row['request_id']}' data-status='Approved'>Approve</button>
+            <button class='btn btn-sm btn-warning btn-action' data-bs-toggle='modal' data-bs-target='#statusModal' data-id='{$row['request_id']}' data-status='Denied'>Deny</button>
+            <button class='btn btn-sm btn-danger btn-action' data-bs-toggle='modal' data-bs-target='#deleteModal' data-id='{$row['request_id']}'>Delete</button>
         </td>
         </tr>";
     }
@@ -348,7 +381,7 @@ if(mysqli_num_rows($result) > 0){
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     
-    // Profile Dropdown Logic
+    // Profile Dropdown Logic (Functional)
     const profileBtn = document.getElementById("profileBtn");
     const profileDropdown = document.getElementById("profileDropdown");
     const viewProfileLink = document.querySelector('.view-profile-link'); 
@@ -371,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
-    // Status Modal Logic (UX improvement applied)
+    // Status Modal Logic (Functional)
     const statusModal = document.getElementById('statusModal');
     if(statusModal) {
         statusModal.addEventListener('show.bs.modal', function(event){
@@ -380,28 +413,27 @@ document.addEventListener("DOMContentLoaded", function() {
             const status = button.getAttribute('data-status');
             document.getElementById('statusRequestId').value = requestId;
             document.getElementById('newStatus').value = status;
-            document.getElementById('statusMessage').innerText = `Are you sure you want to mark this request as "${status}"?`;
+            document.getElementById('statusMessage').innerHTML = `Are you sure you want to mark this request as <b>"${status}"</b>?`;
             
             // Set the correct button color and text for confirmation
             const confirmBtn = statusModal.querySelector('button[type="submit"]');
+            confirmBtn.classList.remove('btn-danger', 'btn-warning', 'btn-success');
+
             if (status === 'Approved') {
-                 confirmBtn.classList.remove('btn-danger', 'btn-warning');
                  confirmBtn.classList.add('btn-success');
                  confirmBtn.innerText = 'Approve Request';
             } else if (status === 'Denied') {
-                 confirmBtn.classList.remove('btn-success', 'btn-warning');
                  confirmBtn.classList.add('btn-danger');
                  confirmBtn.innerText = 'Deny Request';
             } else {
-                 confirmBtn.classList.remove('btn-danger', 'btn-success');
-                 confirmBtn.classList.add('btn-warning');
+                 confirmBtn.classList.add('btn-secondary'); // Default/Fallback
                  confirmBtn.innerText = 'Confirm';
             }
         });
     }
 
 
-    // Delete Modal Logic (Retained)
+    // Delete Modal Logic (Functional)
     const deleteModal = document.getElementById('deleteModal');
     if(deleteModal) {
         deleteModal.addEventListener('show.bs.modal', function(event){
@@ -411,9 +443,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Logout Confirmation Logic (Retained & Ensured)
+    // Logout Confirmation Logic (Functional)
     document.getElementById('confirmLogoutBtn').addEventListener('click', function(){
-      window.location.href = 'logout.php';
+      window.location.href = 'admin_logout.php';
     });
 });
 </script>
