@@ -2,6 +2,8 @@
 include('../config/db.php');
 session_start();
 
+$pending_count = 0;
+
 // ✅ Require login
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
@@ -25,7 +27,7 @@ $sql = "
     ORDER BY ar.request_date DESC
 ";
 
-$result = mysqli_query($conn, $sql); // ✅ now same as your first code
+$result = mysqli_query($conn, $sql); // 
 ?>
 
 <!DOCTYPE html>

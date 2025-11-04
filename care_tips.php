@@ -3,7 +3,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-include('config/db.php'); 
+//include('config/db.php'); 
+if (!isset($conn)) {
+    include(__DIR__ . '/config/db.php');
+}
 
 $sql = "SELECT id, name, content, image_url, date_published FROM care_tips WHERE status = 'Published' ORDER BY date_published DESC";
 $result = mysqli_query($conn, $sql);

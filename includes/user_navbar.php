@@ -1,23 +1,6 @@
-<?php
-include('../config/db.php');
-
-$pending_count = 0;
-
-if (!isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-
-    $query = "SELECT COUNT(*) AS total FROM adoption_requests 
-              WHERE user_id = '$user_id' AND status = 'Pending'";
-    $result = mysqli_query($conn, $query);
-
-    if ($result) {
-        $row = mysqli_fetch_assoc($result);
-        $pending_count = $row['total'];
-    }
-}
-?>
-
 <!-- Navbar -->
+<?php if (!isset($pending_count)) $pending_count = 0; ?>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
   <a class="navbar-brand fw-bold" href="user_index.php">SafePaws</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -48,3 +31,6 @@ if (!isset($_SESSION['user_id'])) {
     </ul>
   </div>
 </nav>
+
+
+

@@ -1,5 +1,8 @@
 <?php
 include('../config/db.php');
+
+$pending_count = 0;
+
 ?>
 
 <!DOCTYPE html>
