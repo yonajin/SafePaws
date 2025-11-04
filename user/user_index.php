@@ -41,7 +41,7 @@ include('../config/db.php');
       <div class="col-md-3 col-sm-6 pet-item" data-type="<?php echo $pet['classification']; ?>">
         <div class="pet-card">
           <a href="user_pet_details.php?pet_id=<?php echo $pet['pet_id']; ?>">
-  <img src="../assets/images/<?php echo !empty($pet['image_url']) ? htmlspecialchars($pet['image_url']) : 'cat.jpg'; ?>" 
+  <img src="../uploads/<?php echo !empty($pet['image_url']) ? htmlspecialchars($pet['image_url']) : 'cat.jpg'; ?>" 
        class="pet-img" alt="<?php echo htmlspecialchars($pet['name']); ?>">
 </a>
 

@@ -1,3 +1,7 @@
+<?php
+include('config/db.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,47 +20,47 @@
 <section class="hero">
   <h1>Adopt Love,<br>Save Lives</h1>
   <p>Find Your New Best Friend at SafePaws</p>
-  <button class="btn btn-lg mt-2" onclick="window.location.href='adopt.php'">
+  <button class="btn btn-lg mt-2" onclick="window.location.href='user_adopt.php'">
   Find a Pet
 </button>
 
 </section>
 
-<!-- Meet Our Pets -->
+<!-- 🐾 Meet Our Pets -->
 <section class="container text-center py-5">
-  <h2 class="section-title mb-4" style="color: #2e2e2e;">Meet Our Pets</h2>
-  <div class="row g-4">
+  <h2 class="section-title mb-4" style="color: #2e2e2e;">Meet Our Lovely Pets</h2>
 
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/images/cat1.jpg" class="pet-img1" alt="Rigby">
-  </a>
-  <p style="font-size: 20px;">Rigby</p>
-   </div>
+  <div class="row g-4" id="pets-container">
+    <?php
+    $sql = "SELECT * FROM pets ORDER BY date_sheltered DESC";
+    $result = $conn->query($sql);
 
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/images/cat4.jpg" class="pet-img1" alt="Wowo">
-  </a>
-  <p style="font-size: 20px;">Wowo</p>
-   </div>
+    if ($result->num_rows > 0):
+      while ($pet = $result->fetch_assoc()):
+    ?>
+      <div class="col-md-3 col-sm-6 pet-item" data-type="<?php echo $pet['classification']; ?>">
+        <div class="pet-card">
+          <a href="user_pet_details.php?pet_id=<?php echo $pet['pet_id']; ?>">
+  <img src="uploads/<?php echo !empty($pet['image_url']) ? htmlspecialchars($pet['image_url']) : 'cat.jpg'; ?>" 
+       class="pet-img" alt="<?php echo htmlspecialchars($pet['name']); ?>">
+</a>
 
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/images/dog1.jpg" class="pet-img1" alt="Bapi">
-  </a>
-  <p style="font-size: 20px;">Bapi</p>
-   </div>
-
-    <div class="col-md-3 col-sm-6 pet-item">
-  <a href="pet_details.php">
-    <img src="assets/images/dog2.jpg" class="pet-img1" alt="Jimbo">
-  </a>
-  <p style="font-size: 20px;">Jimbo</p>
-   </div>
-    <!-- add more as needed -->
+          <div class="pet-info">
+            <p class="pet-name"><?php echo htmlspecialchars($pet['name']); ?></p>
+            <p class="text-muted mb-1"><?php echo htmlspecialchars($pet['breed']); ?></p>
+            <p class="text-muted small"><?php echo htmlspecialchars($pet['age']); ?></p>
+          </div>
+        </div>
+      </div>
+    <?php
+      endwhile;
+    else:
+      echo "<p>No pets available for adoption right now.</p>";
+    endif;
+    ?>
   </div>
- <a href="adopt.php" class="btn btn-outline-dark mt-4">View More</a>
+   <a href="adopt.php" class="btn btn-outline-dark mt-4">View More</a>
+
 </section>
 
 <!-- Care Tips Section -->

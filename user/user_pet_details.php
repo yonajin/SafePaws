@@ -139,7 +139,7 @@ if (isset($_GET['pet_id'])) {
   <div class="container pet-details-container">
     <div class="row align-items-center">
       <div class="col-md-6">
-        <img src="../assets/images/<?php echo htmlspecialchars($pet['image_url']); ?>" 
+        <img src="../uploads/<?php echo htmlspecialchars($pet['image_url']); ?>" 
      alt="<?php echo htmlspecialchars($pet['name']); ?>" 
      class="pet-img">
 

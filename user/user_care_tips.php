@@ -192,14 +192,16 @@ $icon_class = "bi bi-heart-fill";
             
             <?php while ($tip = mysqli_fetch_assoc($result)): 
                 // Determine the image path
-$image_path = !empty($tip['image_url']) 
+                $image_path = !empty($tip['image_url']) 
   ? "assets/images/" . htmlspecialchars($tip['image_url']) 
-  : "/assets/images/default-tip.webp";
-
+  : "assets/images/default-tip.webp";
             ?>
             <div class="col d-flex">
                 <div class="card tip-card flex-fill">
-                    <img src="<?php echo $image_path; ?>" class="tip-img" alt="Image for <?php echo htmlspecialchars($tip['name']); ?>">
+                    <img src="../assets/images/<?php echo htmlspecialchars($tip['image_url']); ?>" 
+                     class="tip-img" 
+                     alt="Image for <?php echo htmlspecialchars($tip['name']); ?>">
+
                     <div class="card-body">
                         <h5 class="tip-title"><?php echo htmlspecialchars($tip['name']); ?></h5>
                         <p class="text-muted small">Published: <?php echo date('M d, Y', strtotime($tip['date_published'])); ?></p>

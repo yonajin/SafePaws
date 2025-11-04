@@ -104,7 +104,7 @@ if (isset($_POST['add_draft']) || isset($_POST['add_publish'])) {
     $content = trim($_POST['content']);
     
     $image = $_FILES['image']['name'] ?? null;
-    $target = "../assets/" . basename($image);
+    $target = "../assets/images/" . basename($image);
 
     $sql = "INSERT INTO care_tips (name, content, image_url, status, date_published) 
             VALUES (?, ?, ?, ?, NOW())";
@@ -136,7 +136,7 @@ if (isset($_POST['update_tip_action'])) {
     $name = trim($_POST['name']);
     $content = trim($_POST['content']);
     $new_image = $_FILES['image']['name'] ?? null;
-    $target = "../assets/" . basename($new_image);
+    $target = "../assets/images/" . basename($new_image);
     
     $action = $_POST['update_tip_action'];
     
@@ -205,8 +205,8 @@ if (isset($_POST['delete_tip_id'])) {
         mysqli_stmt_bind_param($stmt_delete, "i", $tip_id);
         
         if (mysqli_stmt_execute($stmt_delete)) {
-            if ($image_to_delete && file_exists("../assets/" . $image_to_delete)) {
-                unlink("../assets/" . $image_to_delete);
+            if ($image_to_delete && file_exists("../assets/images" . $image_to_delete)) {
+                unlink("../assets/images" . $image_to_delete);
             }
             echo "<script>alert('✅ Care Tip deleted successfully!'); window.location='care_tips.php';</script>";
         } else {
