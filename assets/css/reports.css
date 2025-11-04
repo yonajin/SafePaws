@@ -1,0 +1,37 @@
+/* Consistent Styles */
+    body { font-family: 'Poppins', sans-serif; background-color: #FFF8F3; padding: 15px; }
+    .sidebar { height: calc(100vh - 30px); width: 240px; background-color: #fff; border-right:1px solid #ddd; position: fixed; top:15px; left:25px; display:flex; flex-direction: column; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-radius:12px; padding:25px 0; }
+    .sidebar h2 { font-family: 'Quicksand', sans-serif; color:#A9745B; font-weight:700; font-size:28px; margin-bottom:25px; }
+    .sidebar .nav { width:100%; }
+    .sidebar .nav-link { color:#333; font-weight:500; padding:12px 19px; display:block; border-radius:8px; margin:2px 10px; transition:0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color:#f0e1d8; color:#A9745B; }
+    .topbar { background-color:#A9745B; height:60px; display:flex; justify-content:flex-end; align-items:center; padding:0 30px; color:white; margin-left:288px; margin-right:23px; border-radius:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1); position:relative; }
+    .main-content { margin-left:260px; padding:30px; margin-top:20px; }
+    .profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
+    .profile-dropdown a { display:block; padding:10px 15px; text-decoration:none; color:#333; }
+    .profile-dropdown a:hover { background:#f8f8f8; }
+
+    /* Card and Button Styles */
+    .card { border: none; border-radius: 10px;}
+    .card-header-main { background-color:#f0e1d8; color:#A9745B; border-bottom: none; font-weight: 700; font-size: 1.1em;}
+    .card-body h4 { font-weight: 700; color: #333; }
+    .card-body h5 { color: #A9745B; font-weight: 600; font-size: 1em; }
+
+    .card-global { border: none; border-radius: 10px; height: 120px; background-color: #ffffff;}
+
+    .btn-generate { background-color: #A9745B; color: white; }
+    .btn-generate:hover { background-color: #8e5f47; }
+    .btn-save { background-color: #A9745B; color: white; }
+    .btn-save:hover { background-color: #8e5f47; }
+    
+    /* Table Styles */
+    table { border-collapse: collapse; width: 100%; border-radius: 10px; overflow: hidden; }
+    thead tr { background-color: #f0e1d8; color: #A9745B; }
+    tbody tr:nth-child(even) { background-color: #fdf7f3; }
+    tbody tr:nth-child(odd) { background-color: #ffffff; }
+
+    /* Modal Corners (Consistent) */
+    .modal-header {
+      border-top-left-radius: 0.75rem !important;
+      border-top-right-radius: 0.75rem !important;
+    }

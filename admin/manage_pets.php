@@ -250,88 +250,102 @@ if (isset($_POST['update_pet'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Pets | SafePaws</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
   <style>
-    /* Consistent Styles */
-    body { font-family: 'Poppins', sans-serif; background-color: #FFF8F3; padding: 15px; }
+     body { font-family: 'Poppins', sans-serif; background-color: #FFF8F3; padding: 15px; }
+    .container { margin-top: 20px; }
+    .main-content { margin-left:260px; padding:20px;}
+    .table img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
+    .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size:12px; }
+    .btn-custom { background-color: #f8a488; color: white; border: none; }
+    .btn-custom:hover { background-color: #e78d73; }
 
-    /* --- Sidebar (Consistent) --- */
-    .sidebar { height: calc(100vh - 30px); width: 240px; background-color: #fff; border-right:1px solid #ddd; position: fixed; top:15px; left:25px; display:flex; flex-direction: column; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-radius:12px; padding:25px 0; }
-    .sidebar h2 { font-family: 'Quicksand', sans-serif; color:#A9745B; font-weight:700; font-size:28px; margin-bottom:25px; }
-    .sidebar .nav { width:100%; }
-    .sidebar .nav-link { color:#333; font-weight:500; padding:12px 19px; display:block; border-radius:8px; margin:2px 10px; transition:0.3s; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color:#f0e1d8; color:#A9745B; }
-    
-    /* --- Topbar & Dropdown (Consistent) --- */
-    .topbar { background-color:#A9745B; height:60px; display:flex; justify-content:flex-end; align-items:center; padding:0 30px; color:white; margin-left:288px; margin-right:23px; border-radius:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1); position:relative; }
-    .topbar i { font-size: 26px; cursor: pointer; transition: 0.2s ease; }
-    .topbar i:hover { opacity: 0.85; }
-    .profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
-    .profile-dropdown a { display:block; padding:10px 15px; text-decoration:none; color:#333; }
-    .profile-dropdown a:hover { background:#f8f8f8; }
+    /* --- Sidebar --- */
+   .sidebar { height: calc(100vh - 30px); width: 240px; background-color: #fff; border-right:1px solid #ddd; position: fixed; top:15px; left:25px; display:flex; flex-direction: column; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-radius:12px; padding:25px 0; }
+.sidebar h2 { font-family: 'Quicksand', sans-serif; color:#A9745B; font-weight:700; font-size:28px; margin-bottom:25px; }
+.sidebar .nav { width:100%; }
+.sidebar .nav-link { color:#333; font-weight:500; padding:12px 19px; display:block; border-radius:8px; margin:2px 10px; transition:0.3s; }
+.sidebar .nav-link:hover, .sidebar .nav-link.active { background-color:#f0e1d8; color:#A9745B; }
+.sidebar .nav-link.text-danger { color:#dc3545 !important; }
+    /* --- Topbar & Profile Dropdown --- */
+.topbar { background-color:#A9745B; height:60px; display:flex; justify-content:flex-end; align-items:center; padding:0 30px; color:white; margin-left:288px; margin-right:23px; border-radius:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1); position:relative; }
+.topbar i { font-size:26px; cursor:pointer; transition:0.2s; }
+.topbar i:hover { opacity:0.85; }
+.profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
+.profile-dropdown a { display: block; padding: 10px 15px; text-decoration: none; color: #333; }
+.profile-dropdown a:hover { background-color: #f8f8f8; }
 
-    /* --- Main Content Layout --- */
-    .main-content { margin-left: 260px; padding: 30px; margin-top: 20px; }
-    .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: none; }
-    
-    /* --- Table Styles --- */
-    .table img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .table thead tr { background-color: #f0e1d8; color: #A9745B; }
-    .table-striped tbody tr:nth-of-type(odd) { background-color: #fff; }
-    .table-striped tbody tr:nth-of-type(even) { background-color: #fdf7f3; }
-    
-    /* --- Button Styles --- */
-    .btn-add, .btn-custom, .btn-save-changes { 
-        background-color: #A9745B; 
-        color: white; 
-        border: none; 
-        font-weight: 500;
-        transition: 0.3s;
-    }
-    .btn-add:hover, .btn-custom:hover, .btn-save-changes:hover { background-color: #8e5f47; color: white; }
-    .btn-edit-table { background-color: #FFC107; color: #333; font-weight: 500; }
-    .btn-edit-table:hover { background-color: #e0ac08; color: #333; }
-    
-    /* --- Heading Consistency --- */
-    .main-content h3 { color:#A9745B; }
-    .card h5 { color:#A9745B; font-weight: 600; margin-bottom: 20px; }
-    
-    /* Modal Corners (Consistent) */
-    .modal-header {
-      border-top-left-radius: 0.75rem !important;
-      border-top-right-radius: 0.75rem !important;
-    }
+/* --- Custom Button Styles (UPDATED) --- */
+.btn-save { background-color: #A9745B; color: white; }
+.btn-save:hover { background-color: #8e5f47; }
+
+/* === MODAL CORNERS === */
+.modal-header {
+  border-top-left-radius: 0.75rem !important;
+  border-top-right-radius: 0.75rem !important;
+}
+
   </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <h2>SafePaws</h2>
-  <nav class="nav flex-column">
-    <a href="admin_dashboard.php" class="nav-link"><i class="bi bi-house-door me-2"></i> Dashboard</a>
-    <a href="manage_pets.php" class="nav-link active"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
-    <a href="adoption_requests.php" class="nav-link"><i class="bi bi-envelope-check me-2"></i> Adoption Requests</a>
-    <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
-    <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
-    <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
-  </nav>
+    <h2>SafePaws</h2>
+    <nav class="nav flex-column text-start w-100">
+      <a href="admin_dashboard.php" class="nav-link"><i class="bi bi-house-door me-2"></i> Dashboard</a>
+      <a href="manage_pets.php" class="nav-link active"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
+      <a href="adoption_requests.php" class="nav-link"><i class="bi bi-envelope-check me-2"></i> Adoption Requests</a>
+      <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
+      <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
+      <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
+    </nav>
 </div>
 
 <div class="topbar">
   <i id="profileBtn" class="bi bi-person-circle"></i>
-    <div id="profileDropdown" class="profile-dropdown">
+  <div id="profileDropdown" class="profile-dropdown">
       <a href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal" class="view-profile-link"><i class="bi bi-person"></i> View Profile</a>
       <hr class="m-0">
       <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal" id="dropdownLogoutLink"><i class="bi bi-box-arrow-right"></i> Logout</a>
-    </div>
+  </div>
 </div>
 
-
 <div class="main-content">
+
+<div class="container">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold" style="color:#A9745B; margin:0;">🐶 Manage Pet Records</h3>
-    <button class="btn btn-add px-3 py-2" id="openAddPet"><i class="bi bi-plus-circle me-1"></i> Add Pet</button>
+  <h3 class="fw-bold m-0" style="color:#A9745B;">Manage Pets </h3>
+  </div>
+
+
+  <!-- Add Pet -->
+  <div class="card p-4 mb-4">
+    <h5>Add New Pet</h5>
+    <form method="POST" enctype="multipart/form-data">
+      <div class="row g-3">
+        <div class="col-md-4"><input type="text" name="name" class="form-control" placeholder="Pet Name" required></div>
+        <div class="col-md-4"><input type="text" name="classification" class="form-control" placeholder="Classification" required></div>
+        <div class="col-md-4"><input type="text" name="age" class="form-control" placeholder="Age" required></div>
+        <div class="col-md-4"><input type="text" name="breed" class="form-control" placeholder="Breed"></div>
+        <div class="col-md-4">
+          <select name="gender" class="form-control">
+            <option>Male</option><option>Female</option>
+          </select>
+        </div>
+        <div class="col-md-4"><input type="text" name="color" class="form-control" placeholder="Color"></div>
+        <div class="col-md-6"><input type="text" name="health_status" class="form-control" placeholder="Health Status"></div>
+        <div class="col-md-6"><input type="text" name="temperament" class="form-control" placeholder="Temperament"></div>
+        <div class="col-md-6">
+          <select name="adoption_status" class="form-control">
+            <option value="Available">Available</option><option value="Adopted">Adopted</option>
+          </select>
+        </div>
+        <div class="col-md-6"><input type="date" name="date_sheltered" class="form-control" required></div>
+        <div class="col-md-12"><input type="file" name="image" class="form-control"></div>
+      </div>
+      <button type="submit" name="add_pet" class="btn btn-custom mt-3">Add Pet</button>
+    </form>
   </div>
 
     <?php if ($message): // Display alert message if session message exists ?>
@@ -426,89 +440,20 @@ if (isset($_POST['update_pet'])) {
     </div>
 </div>
 
-<div class="modal fade" id="editPetModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header" style="background-color:#A9745B;color:white;">
-                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Pet Record</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" enctype="multipart/form-data" id="editPetForm">
-                <input type="hidden" name="update_pet" value="1">
-                <input type="hidden" name="pet_id" id="edit_pet_id">
-                <div class="modal-body bg-light">
-                    <div class="row g-3">
-                        <div class="col-md-4"><label class="form-label small text-muted">Name</label><input type="text" name="name" id="edit_name" class="form-control" required></div>
-                        <div class="col-md-4"><label class="form-label small text-muted">Classification</label><input type="text" name="classification" id="edit_classification" class="form-control" required></div>
-                        <div class="col-md-4"><label class="form-label small text-muted">Age</label><input type="text" name="age" id="edit_age" class="form-control" required></div>
-                        
-                        <div class="col-md-4"><label class="form-label small text-muted">Breed</label><input type="text" name="breed" id="edit_breed" class="form-control"></div>
-                        <div class="col-md-4"><label class="form-label small text-muted">Gender</label>
-                          <select name="gender" id="edit_gender" class="form-select"><option value="Male">Male</option><option value="Female">Female</option></select>
-                        </div>
-                        <div class="col-md-4"><label class="form-label small text-muted">Color</label><input type="text" name="color" id="edit_color" class="form-control"></div>
-                        
-                        <div class="col-md-6"><label class="form-label small text-muted">Health Status</label><input type="text" name="health_status" id="edit_health_status" class="form-control"></div>
-                        <div class="col-md-6"><label class="form-label small text-muted">Temperament</label><input type="text" name="temperament" id="edit_temperament" class="form-control"></div>
-                        
-                        <div class="col-md-4"><label class="form-label small text-muted">Adoption Status</label>
-                          <select name="adoption_status" id="edit_adoption_status" class="form-select"><option value="Available">Available</option><option value="Adopted">Adopted</option></select>
-                        </div>
-                        <div class="col-md-4"><label class="form-label small text-muted">Date Sheltered</label><input type="date" name="date_sheltered" id="edit_date_sheltered" class="form-control" required></div>
-                        
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted">New Image (Optional)</label>
-                            <input type="file" name="image" class="form-control">
-                            <small class="form-text text-muted" id="current_image_path"></small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer bg-white d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-save-changes px-4"><i class="bi bi-save me-1"></i> Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="deletePetModal" tabindex="-1" aria-labelledby="deletePetModalLabel" aria-hidden="true">
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header" style="background-color:#A9745B; color:white;">
-                <h5 class="modal-title" id="deletePetModalLabel"><i class="bi bi-exclamation-triangle-fill"></i> Confirm Deletion</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content shadow-lg" style="border-radius:20px; overflow:hidden;">
+            <div class="modal-header text-white" style="background-color:#A9745B; border-bottom:none;">
+                <h5 class="modal-title w-100 text-center"><i class="bi bi-box-arrow-right"></i> Confirm Logout</h5>
             </div>
-            <form method="POST" id="confirmDeleteForm">
-                <input type="hidden" name="delete_pet_id" id="delete_pet_id_input">
-                <div class="modal-body text-center">
-                    <p class="fw-semibold mb-3 text-danger">WARNING: This will permanently delete the pet and related records.</p>
-                    <p class="fw-semibold mb-3" style="color:#333;">Are you sure you want to delete this Pet Record?</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">No</button>
-                        <button type="submit" class="btn btn-danger px-4">Yes, Delete It</button>
-                    </div>
+            <div class="modal-body text-center py-4" style="background-color:#FFF8F3;">
+                <p class="fw-semibold mb-4" style="color:#333;">Are you sure you want to log out?</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger px-4 rounded-pill" id="confirmLogoutBtn">Yes</button>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
-
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg rounded-4">
-        <div class="modal-header" style="background-color:#A9745B; color:white;">
-          <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right"></i> Confirm Logout</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <p class="fw-semibold mb-3" style="color:#333;">Are you sure you want to log out?</p>
-          <div class="d-flex justify-content-center gap-3">
-            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">No</button>
-            <a href="admin_logout.php" class="btn btn-danger px-4">Yes</a>
-          </div>
-        </div>
-      </div>
     </div>
 </div>
 
@@ -522,7 +467,6 @@ if (isset($_POST['update_pet'])) {
             <form method="POST">
                 <input type="hidden" name="update_admin_profile" value="1">
                 <div class="modal-body text-center bg-light">
-                    
                     <i class="bi bi-person-circle" style="font-size: 60px; color: #A9745B;"></i>
                     <h5 class="mt-2 mb-4 fw-bold"><?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></h5>
                     
@@ -545,110 +489,43 @@ if (isset($_POST['update_pet'])) {
                 
                 <div class="modal-footer bg-white d-flex justify-content-end align-items-center">
                     <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-save-changes px-4">Save Changes</button>
+                    <button type="submit" class="btn btn-save px-4">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    
-    // --- Consistency: Profile Dropdown Logic ---
-    const profileBtn = document.getElementById("profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const viewProfileLink = document.querySelector('.view-profile-link'); 
+// Logout Confirmation Logic
+document.getElementById('confirmLogoutBtn').addEventListener('click', function(){
+    window.location.href = 'admin_logout.php';
+});
 
-    if (profileBtn) {
-        profileBtn.addEventListener("click", () => {
-          profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
-        });
-    }
+// Profile Dropdown Logic
+const profileBtn = document.getElementById("profileBtn");
+const profileDropdown = document.getElementById("profileDropdown");
+const viewProfileLink = document.querySelector('.view-profile-link'); 
 
-    if (viewProfileLink) {
-        viewProfileLink.addEventListener('click', () => {
-            profileDropdown.style.display = 'none';
-        });
-    }
-
-    document.addEventListener("click", e => {
-      if (profileBtn && !profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
-        profileDropdown.style.display = "none";
-      }
+if (profileBtn) {
+    profileBtn.addEventListener("click", () => {
+      profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
     });
-    // --- END Profile Dropdown ---
+}
 
-    // --- Modal Initializations ---
-    const addPetModal = new bootstrap.Modal(document.getElementById('addPetModal'));
-    const editPetModal = new bootstrap.Modal(document.getElementById('editPetModal'));
-    const deletePetModal = new bootstrap.Modal(document.getElementById('deletePetModal'));
-    
-    // Open Add Pet Modal
-    const openAddPetButton = document.getElementById("openAddPet");
-    if (openAddPetButton) {
-        openAddPetButton.addEventListener("click", () => addPetModal.show());
-    }
-
-    // --- Edit Pet Modal Logic (Fetches data via Fetch API) ---
-    document.querySelectorAll('.edit-pet-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const petId = this.getAttribute('data-id');
-            
-            fetch('manage_pets.php?action=fetch&id=' + petId) 
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert('Error fetching pet data: ' + data.error);
-                        console.error(data.error);
-                        return;
-                    }
-                    
-                    // Populate Form Fields
-                    document.getElementById('edit_pet_id').value = data.pet_id;
-                    document.getElementById('edit_name').value = data.name;
-                    document.getElementById('edit_classification').value = data.classification;
-                    document.getElementById('edit_age').value = data.age;
-                    document.getElementById('edit_breed').value = data.breed;
-                    document.getElementById('edit_color').value = data.color;
-                    document.getElementById('edit_health_status').value = data.health_status;
-                    document.getElementById('edit_temperament').value = data.temperament;
-                    document.getElementById('edit_date_sheltered').value = data.date_sheltered;
-                    
-                    // Select elements
-                    document.getElementById('edit_gender').value = data.gender;
-                    document.getElementById('edit_adoption_status').value = data.adoption_status;
-                    
-                    // Image Path Display
-                    const imagePathElement = document.getElementById('current_image_path');
-                    imagePathElement.innerHTML = data.image_url ? 
-                        `Current Image: <b>${data.image_url}</b>` : 
-                        'No current image uploaded.';
-                    
-                    editPetModal.show();
-                })
-                .catch(error => {
-                    console.error('Fetch Error:', error);
-                    alert('Could not connect to the server to fetch pet data.');
-                });
-        });
+if (viewProfileLink) {
+    viewProfileLink.addEventListener('click', () => {
+        profileDropdown.style.display = 'none';
     });
-    
-    // --- Delete Pet Modal Logic ---
-    const deleteIdInput = document.getElementById('delete_pet_id_input');
-    
-    document.querySelectorAll('.delete-pet-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const petId = this.getAttribute('data-id');
-            deleteIdInput.value = petId;
-            deletePetModal.show();
-        });
-    });
+}
 
+document.addEventListener("click", e => {
+  if (profileBtn && !profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+    profileDropdown.style.display = "none";
+  }
 });
 </script>
+
 </body>
 </html>

@@ -3,10 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-//include('config/db.php'); 
-if (!isset($conn)) {
-    include(__DIR__ . '/config/db.php');
-}
+
+include('config/db.php'); 
 
 $sql = "SELECT id, name, content, image_url, date_published FROM care_tips WHERE status = 'Published' ORDER BY date_published DESC";
 $result = mysqli_query($conn, $sql);
@@ -179,7 +177,10 @@ $icon_class = "bi bi-heart-fill"; // Using Bootstrap Icons for visual appeal
             
             <?php while ($tip = mysqli_fetch_assoc($result)): 
                 // Determine the image path
-                $image_path = !empty($tip['image_url']) ? "uploads/" . htmlspecialchars($tip['image_url']) : "assets/images/default-tip.webp";
+$image_path = !empty($tip['image_url']) 
+  ? "assets/images/" . htmlspecialchars($tip['image_url']) 
+  : "/assets/images/default-tip.webp";
+
             ?>
             <div class="col d-flex">
                 <div class="card tip-card flex-fill">

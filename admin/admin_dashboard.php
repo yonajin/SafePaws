@@ -21,71 +21,78 @@ if (!isset($_SESSION['admin_name']) && isset($_SESSION['admin_id'])) {
     $_SESSION['admin_name'] = "Admin";
 }
 
-// Flash message handler
+// SECURITY CHECK & ADMIN SESSION SETUP
+if (!isset($_SESSION['admin_name'])) {
+    // Fallback: fetch/set admin name for the topbar
+    $result_admin = mysqli_query($conn, "SELECT name FROM admin WHERE id = 1");
+    if ($result_admin && $row_admin = mysqli_fetch_assoc($result_admin)) {
+        $_SESSION['admin_name'] = $row_admin['name'];
+    } else {
+        $_SESSION['admin_name'] = "Admin"; 
+    }
+}
+
+// ✅ Flash message handler
+
 $message = $_SESSION['dashboard_message'] ?? '';
 $message_type = $_SESSION['dashboard_message_type'] ?? '';
 unset($_SESSION['dashboard_message'], $_SESSION['dashboard_message_type']);
 
-// Handle profile update (CODE REMAINS UNCHANGED)
+
+// === SECURE LOGIC: ADMIN PROFILE UPDATE (RETAINED) ===
 if (isset($_POST['update_admin_profile'])) {
     $admin_name = trim($_POST['admin_name']);
-    $admin_id_to_update = $_SESSION['admin_id'] ?? 0;
+    $admin_id = 1; 
     $msg = "";
-    $success = true;
+    $success = true; 
 
-    if ($admin_id_to_update == 0) {
-        $msg = "Error: Admin ID not found in session.";
+    // --- Name Update Logic ---
+    $sql_name = "UPDATE admin SET name = ? WHERE id = ?";
+    $stmt_name = mysqli_prepare($conn, $sql_name);
+    if ($stmt_name) {
+        mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $admin_id);
+        if (mysqli_stmt_execute($stmt_name)) {
+            $_SESSION['admin_name'] = $admin_name; 
+            $msg .= "Profile name updated successfully! ";
+        } else {
+            $msg .= "Error updating profile name: " . mysqli_stmt_error($stmt_name);
+            $success = false;
+        }
+        mysqli_stmt_close($stmt_name);
+    } else {
+        $msg .= "Database error for name update. ";
         $success = false;
     }
 
-    if ($success) {
-        // --- Update name ---
-        $sql_name = "UPDATE admin SET full_name = ? WHERE admin_id = ?";
-        $stmt_name = mysqli_prepare($conn, $sql_name);
-        if ($stmt_name) {
-            mysqli_stmt_bind_param($stmt_name, "si", $admin_name, $admin_id_to_update);
-            if (mysqli_stmt_execute($stmt_name)) {
-                $_SESSION['admin_name'] = $admin_name; 
-                $msg .= "Profile name updated successfully! ";
-            } else {
-                $msg .= "Error updating profile name: " . mysqli_stmt_error($stmt_name);
-                $success = false;
-            }
-            mysqli_stmt_close($stmt_name);
-        } else {
-            $msg .= "Database error on name update.";
-            $success = false;
-        }
 
-        // --- Update password if provided ---
-        if (!empty($_POST['new_password'])) {
-            if ($_POST['new_password'] === $_POST['confirm_password']) {
-                $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-                $sql_pass = "UPDATE admin SET password = ? WHERE admin_id = ?";
-                $stmt_pass = mysqli_prepare($conn, $sql_pass);
-                if ($stmt_pass) {
-                    mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $admin_id_to_update);
-                    if (mysqli_stmt_execute($stmt_pass)) {
-                        $msg .= "Password updated successfully!";
-                    } else {
-                        $msg .= " Error updating password: " . mysqli_stmt_error($stmt_pass);
-                        $success = false;
-                    }
-                    mysqli_stmt_close($stmt_pass);
+    // --- Password Change Logic ---
+    if (!empty($_POST['new_password'])) {
+        if ($_POST['new_password'] === $_POST['confirm_password']) {
+            $new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+            $sql_pass = "UPDATE admin SET password = ? WHERE id = ?";
+            $stmt_pass = mysqli_prepare($conn, $sql_pass);
+            if ($stmt_pass) {
+                mysqli_stmt_bind_param($stmt_pass, "si", $new_password, $admin_id);
+                if (mysqli_stmt_execute($stmt_pass)) {
+                    $msg .= " Password updated successfully!";
+
                 } else {
-                    $msg .= "Database error on password update.";
+                    $msg .= " Error updating password: " . mysqli_stmt_error($stmt_pass);
                     $success = false;
                 }
+                mysqli_stmt_close($stmt_pass);
             } else {
-                $msg .= " Error: Passwords do not match.";
-                $success = false;
+                 $msg .= " Database error for password update. ";
+                 $success = false;
             }
+        } else {
+             $msg .= " Error: Passwords do not match.";
+             $success = false;
         }
     }
     
     $_SESSION['dashboard_message'] = $msg;
     $_SESSION['dashboard_message_type'] = $success ? 'success' : 'danger';
-    
     header("Location: admin_dashboard.php"); 
     exit();
 }
@@ -180,21 +187,22 @@ $recent_admins = mysqli_fetch_all($res_recent_admins, MYSQLI_ASSOC);
     .sidebar .nav-link { color: #333; font-weight: 500; padding: 12px 19px; display: block; transition: all 0.3s ease; border-radius: 8px; margin: 2px 10px; }
     .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #f0e1d8; color: #A9745B; }
     /* --- Topbar & Profile Dropdown --- */
-    .topbar { background-color: #A9745B; height: 60px; display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; color: white; margin-left: 288px; margin-right: 23px; border-radius: 15px; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); position: relative; }
-    .topbar i { font-size: 26px; cursor: pointer; transition: 0.2s ease; }
-    .topbar i:hover { opacity: 0.85; }
-    .profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
-    .profile-dropdown a { display: block; padding: 10px 15px; text-decoration: none; color: #333; }
-    .profile-dropdown a:hover { background-color: #f8f8f8; }
+.topbar { background-color:#A9745B; height:60px; display:flex; justify-content:flex-end; align-items:center; padding:0 30px; color:white; margin-left:288px; margin-right:23px; border-radius:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1); position:relative; }
+.topbar i { font-size:26px; cursor:pointer; transition:0.2s; }
+.topbar i:hover { opacity:0.85; }
+/* --- Profile Dropdown --- */
+.profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
+.profile-dropdown a { display: block; padding: 10px 15px; text-decoration: none; color: #333; }
+.profile-dropdown a:hover { background-color: #f8f8f8; }
     /* --- Main Content --- */
     .main-content { margin-left: 260px; padding: 30px; margin-top: 8px; }
     .card { border: none; border-radius: 15px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .card h5 { font-weight: 600; color: #A9745B; }
     .value { font-size: 28px; font-weight: 700; color: #333; }
     .chart-placeholder { background-color: #fff; border-radius: 15px; padding: 25px; height: 300px; display: flex; align-items: center; justify-content: center; color: #a9745b; font-weight: 500; border: 1px solid #eee; }
-    /* --- Custom Button Styles (Consistent) --- */
-    .btn-save { background-color: #A9745B; color: white; }
-    .btn-save:hover { background-color: #8e5f47; }
+/* --- Custom Button Styles (UPDATED) --- */
+.btn-save { background-color: #A9745B; color: white; }
+.btn-save:hover { background-color: #8e5f47; }
     /* === MODAL CORNERS === */
     .modal-header {
       border-top-left-radius: 0.75rem !important;
@@ -221,10 +229,28 @@ $recent_admins = mysqli_fetch_all($res_recent_admins, MYSQLI_ASSOC);
 </head>
 <body>
 
-<?php 
-// Assuming admin_header.php contains the sidebar and topbar structure
-include('../includes/admin_header.php'); 
-?>
+
+<div class="sidebar">
+    <h2>SafePaws</h2>
+    <nav class="nav flex-column text-start w-100">
+      <a href="admin_dashboard.php" class="nav-link active"><i class="bi bi-house-door me-2"></i> Dashboard</a>
+      <a href="manage_pets.php" class="nav-link"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
+      <a href="adoption_requests.php" class="nav-link"><i class="bi bi-envelope-check me-2"></i> Adoption Requests</a>
+      <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
+      <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
+      <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
+    </nav>
+</div>
+
+<div class="topbar">
+    <i id="profileBtn" class="bi bi-person-circle"></i>
+    <div id="profileDropdown" class="profile-dropdown">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal" class="view-profile-link"><i class="bi bi-person"></i> View Profile</a>
+      <hr class="m-0">
+      <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal" id="dropdownLogoutLink"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+  </div>
+
 
   <div class="main-content">
     <h3 class="mb-4 fw-bold" style="color:#A9745B;">Welcome, <?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></h3>
@@ -277,22 +303,40 @@ include('../includes/admin_header.php');
     <div class="row g-4 mb-4">
       <div class="col-md-6">
         <div class="card p-0 h-100">
-            <div class="card-header bg-white" style="border-top-left-radius:15px; border-top-right-radius:15px; padding-bottom: 0;">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="user-tab" data-bs-toggle="tab" data-bs-target="#user-pane" type="button" role="tab" aria-controls="user-pane" aria-selected="true">
-                            <i class="bi bi-people-fill"></i> Users (<?php echo $total_users; ?>)
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-pane" type="button" role="tab" aria-controls="admin-pane" aria-selected="false">
-                            <i class="bi bi-person-gear"></i> Staff/Admin (<?php echo $total_staff_admins; ?>)
-                        </button>
-                    </li>
-                </ul>
-            </div>
 
-            <div class="tab-content" id="myTabContent">
+          <h5 class="card-header fw-semibold" style="color:#A9745B; background-color:#fff6f1; border-top-left-radius:15px; border-top-right-radius:15px;">
+              Recent User Registrations
+          </h5>
+          <div class="p-3">
+              <p class="text-muted small">Displaying the 5 most recently registered users:</p>
+            <?php
+            $sql_recent_users = "SELECT full_name, email, date_registered FROM users ORDER BY date_registered DESC LIMIT 5";
+            $res_recent_users = mysqli_query($conn, $sql_recent_users);
+
+            if ($res_recent_users && mysqli_num_rows($res_recent_users) > 0) {
+                echo '<ul class="list-group list-group-flush">';
+                while ($user = mysqli_fetch_assoc($res_recent_users)) {
+                    $time_ago = time() - strtotime($user['date_registered']);
+                    $minutes = round(abs($time_ago) / 60);
+                    $display_time = ($minutes < 60) ? "{$minutes}m ago" : date('M d, H:i', strtotime($user['date_registered']));
+                    ?>
+                    <li class="list-group-item d-flex justify-content-between align-items-center ps-0 pe-0">
+                        <div>
+                            <strong class="text-dark"><?php echo htmlspecialchars($user['full_name']); ?></strong><br>
+                            <span class="small text-muted"><?php echo htmlspecialchars($user['email']); ?></span>
+                        </div>
+                        <span class="badge bg-secondary-subtle text-secondary fw-normal"><?php echo $display_time; ?></span>
+                    </li>
+                    <?php
+                } // closes while
+                echo '</ul>';
+            } else {
+                echo '<p class="text-center text-muted mt-3">No recent users found.</p>';
+            } // closes if
+            ?>
+
+
+                <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="user-pane" role="tabpanel" aria-labelledby="user-tab" tabindex="0">
                     <div class="p-3">
                         <p class="text-muted small">Displaying the 5 most recently registered **Community Users**:</p>
@@ -353,7 +397,9 @@ include('../includes/admin_header.php');
       <div class="col-md-6">
         <div class="card p-4 h-100 d-flex flex-column justify-content-between" style="background-color:#fff6f1;">
           <h5 class="fw-semibold text-center" style="color:#A9745B;">
-              📅 <?php echo htmlspecialchars($current_month_name); ?> Adoption Rate
+
+              Overall Adoption Rate
+
           </h5>
           
           <div class="text-center my-4">
@@ -420,204 +466,96 @@ include('../includes/admin_header.php');
           
         </div>
       </div>
-      
-      <div class="col-md-6">
-        <div class="card p-4 h-100 d-flex flex-column justify-content-between">
-          <h5 class="fw-semibold text-center" style="color:#A9745B;">
-              ℹ️ Quick Summary
-          </h5>
-          <div class="text-center my-4">
-              <div class="row g-2">
-                  <div class="col-6">
-                      <i class="bi bi-person-heart display-4" style="color: #A9745B;"></i>
-                      <h4 class="mt-2 fw-bold"><?php echo $total_users; ?></h4>
-                      <p class="text-muted mb-0">Total Community Users</p>
-                  </div>
-                   <div class="col-6">
-                      <i class="bi bi-calendar-check display-4 text-success"></i>
-                      <h4 class="mt-2 fw-bold"><?php echo $approved_monthly; ?></h4>
-                      <p class="text-muted mb-0">Approved this Month</p>
-                  </div>
-                  <div class="col-6">
-                      <i class="bi bi-house-door display-4 text-secondary"></i>
-                      <h4 class="mt-2 fw-bold"><?php echo $available_pets; ?></h4>
-                      <p class="text-muted mb-0">Pets Awaiting Home</p>
-                  </div>
-                  <div class="col-6">
-                      <i class="bi bi-clipboard-data display-4 text-warning"></i>
-                      <h4 class="mt-2 fw-bold"><?php echo $total_staff_admins; ?></h4>
-                      <p class="text-muted mb-0">Total Staff/Admins</p>
-                  </div>
-              </div>
-          </div>
-          <a href="reports.php" class="btn btn-sm btn-save w-100 mt-3">View Detailed Reports</a>
-        </div>
-      </div>
-      
-    </div>
-  </div>
 
-  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg rounded-4">
-        <div class="modal-header" style="background-color:#A9745B; color:white;">
-          <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right"></i> Confirm Logout</h5>
+        <div class="modal-content shadow-lg" style="border-radius:20px; overflow:hidden;">
+            <div class="modal-header text-white" style="background-color:#A9745B; border-bottom:none;">
+                <h5 class="modal-title w-100 text-center"><i class="bi bi-box-arrow-right"></i> Confirm Logout</h5>
+            </div>
+            <div class="modal-body text-center py-4" style="background-color:#FFF8F3;">
+                <p class="fw-semibold mb-4" style="color:#333;">Are you sure you want to log out?</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger px-4 rounded-pill" id="confirmLogoutBtn">Yes</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body text-center">
-          <p class="fw-semibold mb-3" style="color:#333;">Are you sure you want to log out?</p>
-          <div class="d-flex justify-content-center gap-3">
-            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">No</button>
-            <button type="button" class="btn btn-danger px-4" id="confirmLogoutBtn">Yes</button>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content border-0 shadow-lg rounded-4">
-              <div class="modal-header" style="background-color:#A9745B; color:white;">
-                  <h5 class="modal-title" id="adminProfileModalLabel"><i class="bi bi-person-circle"></i> Admin Profile</h5>
-                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <form method="POST">
-                  <input type="hidden" name="update_admin_profile" value="1">
-                  <div class="modal-body text-center bg-light">
-                      <i class="bi bi-person-circle" style="font-size: 60px; color: #A9745B;"></i>
-                      <h5 class="mt-2 mb-4 fw-bold"><?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></h5>
-                      
-                      <div class="mb-3 text-start">
-                          <label for="adminNameInput" class="form-label fw-semibold">Admin Name</label>
-                          <input type="text" name="admin_name" id="adminNameInput" class="form-control" value="<?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?>" required>
-                      </div>
+<div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header" style="background-color:#A9745B; color:white;">
+                <h5 class="modal-title" id="adminProfileModalLabel"><i class="bi bi-person-circle"></i> Admin Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="update_admin_profile" value="1">
+                <div class="modal-body text-center bg-light">
+                    <i class="bi bi-person-circle" style="font-size: 60px; color: #A9745B;"></i>
+                    <h5 class="mt-2 mb-4 fw-bold"><?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></h5>
+                    
+                    <div class="mb-3 text-start">
+                        <label for="adminNameInput" class="form-label fw-semibold">Admin Name</label>
+                        <input type="text" name="admin_name" id="adminNameInput" class="form-control" value="<?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?>" required>
+                    </div>
 
-                      <h6 class="mt-4 mb-2 text-start fw-bold">Change Password</h6>
-                      
-                      <div class="mb-3 text-start">
-                          <label for="newPasswordInput" class="form-label">New Password</label>
-                          <input type="password" name="new_password" id="newPasswordInput" class="form-control" placeholder="Leave blank to keep current password">
-                      </div>
-                      <div class="mb-3 text-start">
-                          <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
-                          <input type="password" name="confirm_password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password">
-                      </div>
-                  </div>
-                  
-                  <div class="modal-footer bg-white d-flex justify-content-end align-items-center">
-                      <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                      <button type="submit" class="btn btn-save px-4">Save Changes</button>
-                  </div>
-              </form>
-          </div>
-      </div>
-  </div>
+                    <h6 class="mt-4 mb-2 text-start fw-bold">Change Password</h6>
+                    
+                    <div class="mb-3 text-start">
+                        <label for="newPasswordInput" class="form-label">New Password</label>
+                        <input type="password" name="new_password" id="newPasswordInput" class="form-control" placeholder="Leave blank to keep current password">
+                    </div>
+                    <div class="mb-3 text-start">
+                        <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+                        <input type="password" name="confirm_password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password">
+                    </div>
+                </div>
+                
+                <div class="modal-footer bg-white d-flex justify-content-end align-items-center">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-save px-4">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
-      window.location.href = 'admin_logout.php'; 
+
+<script>
+// Logout Confirmation Logic
+document.getElementById('confirmLogoutBtn').addEventListener('click', function(){
+    window.location.href = 'admin_logout.php';
+});
+
+// Profile Dropdown Logic
+const profileBtn = document.getElementById("profileBtn");
+const profileDropdown = document.getElementById("profileDropdown");
+const viewProfileLink = document.querySelector('.view-profile-link'); 
+
+if (profileBtn) {
+    profileBtn.addEventListener("click", () => {
+      profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
     });
+}
 
-    // Profile Dropdown Logic
-    const profileBtn = document.getElementById("profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const viewProfileLink = document.querySelector('.view-profile-link'); 
-
-    if (profileBtn) {
-        profileBtn.addEventListener("click", () => {
-          profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
-        });
-    }
-
-    if (viewProfileLink) {
-        viewProfileLink.addEventListener('click', () => {
-            profileDropdown.style.display = 'none';
-        });
-    }
-
-    document.addEventListener("click", e => {
-      if (profileBtn && !profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
-        profileDropdown.style.display = "none";
-      }
+if (viewProfileLink) {
+    viewProfileLink.addEventListener('click', () => {
+        profileDropdown.style.display = 'none';
     });
-    
-    // PHP variables transferred to JS
-    const approvedOverall = <?php echo json_encode($approved_adoptions); ?>;
-    const totalOverall = <?php echo json_encode($total_requests); ?>;
-    const approvedMonthly = <?php echo json_encode($approved_monthly); ?>;
-    const totalMonthly = <?php echo json_encode($total_monthly_requests); ?>;
+}
 
-    // Calculate non-approved requests
-    const nonApprovedOverall = totalOverall - approvedOverall;
-    const nonApprovedMonthly = totalMonthly - approvedMonthly;
+document.addEventListener("click", e => {
+  if (profileBtn && !profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+    profileDropdown.style.display = "none";
+  }
+});
+</script>
 
-    // Default Chart Options (Doughnut)
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '80%', // Makes it a Doughnut chart
-        plugins: {
-            legend: {
-                display: false 
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        let label = context.label || '';
-                        if (label) {
-                            label += ': ';
-                        }
-                        if (context.parsed !== null) {
-                            label += context.parsed + ' requests';
-                        }
-                        return label;
-                    }
-                }
-            }
-        }
-    };
-
-    // --- Monthly Adoption Rate Chart ---
-    const monthlyCtx = document.getElementById('monthlyAdoptionRateChart');
-    if (monthlyCtx) {
-        const monthlyData = {
-            labels: ['Approved', 'Not Approved/Pending'],
-            datasets: [{
-                data: [approvedMonthly, nonApprovedMonthly],
-                backgroundColor: ['#A9745B', '#E5E5E5'], // Brown for Approved, Light Gray for the rest
-                hoverBackgroundColor: ['#8e5f47', '#D1D1D1'],
-                borderWidth: 0,
-            }]
-        };
-
-        new Chart(monthlyCtx, {
-            type: 'doughnut',
-            data: monthlyData,
-            options: chartOptions
-        });
-    }
-
-    // --- Overall Adoption Rate Chart ---
-    const overallCtx = document.getElementById('overallAdoptionRateChart');
-    if (overallCtx) {
-        const overallData = {
-            labels: ['Approved', 'Not Approved/Pending'],
-            datasets: [{
-                data: [approvedOverall, nonApprovedOverall],
-                backgroundColor: ['#A9745B', '#E5E5E5'], 
-                hoverBackgroundColor: ['#8e5f47', '#D1D1D1'],
-                borderWidth: 0,
-            }]
-        };
-
-        new Chart(overallCtx, {
-            type: 'doughnut',
-            data: overallData,
-            options: chartOptions
-        });
-    }
-
-  </script>
 </body>
 </html>

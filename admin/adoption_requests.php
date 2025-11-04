@@ -150,44 +150,12 @@ if (isset($_POST['update_admin_profile'])) {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
-
-<style>
-body { font-family: 'Poppins', sans-serif; background-color: #FFF8F3; padding: 15px; }
-.sidebar { height: calc(100vh - 30px); width: 240px; background-color: #fff; border-right:1px solid #ddd; position: fixed; top:15px; left:25px; display:flex; flex-direction: column; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-radius:12px; padding:25px 0; }
-.sidebar h2 { font-family: 'Quicksand', sans-serif; color:#A9745B; font-weight:700; font-size:28px; margin-bottom:25px; }
-.sidebar .nav { width:100%; }
-.sidebar .nav-link { color:#333; font-weight:500; padding:12px 19px; display:block; border-radius:8px; margin:2px 10px; transition:0.3s; }
-.sidebar .nav-link:hover, .sidebar .nav-link.active { background-color:#f0e1d8; color:#A9745B; }
-.sidebar .nav-link.text-danger { color:#dc3545 !important; }
-.topbar { background-color:#A9745B; height:60px; display:flex; justify-content:flex-end; align-items:center; padding:0 30px; color:white; margin-left:288px; margin-right:23px; border-radius:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1); position:relative; }
-.topbar i { font-size:26px; cursor:pointer; transition:0.2s; }
-.topbar i:hover { opacity:0.85; }
-.main-content { margin-left:260px; padding:30px; margin-top:20px; }
-table { border-collapse: collapse; width:100%; }
-th, td { text-align:center; padding:12px; vertical-align:middle; }
-thead th { background-color:#f0e1d8; color:#A9745B; font-weight:600; }
-tbody tr:nth-child(odd) { background-color:#fff; }
-tbody tr:nth-child(even) { background-color:#f9f9f9; }
-tbody tr:hover { background-color:#f1edea; transition:0.2s; }
-.btn-action { margin:0 2px; }
-.profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
-.profile-dropdown a { display:block; padding:10px 15px; text-decoration:none; color:#333; }
-.profile-dropdown a:hover { background:#f8f8f8; }
-
-/* Custom Button Styles (Consistent with Dashboard) */
-.btn-save { background-color: #A9745B; color: white; }
-.btn-save:hover { background-color: #8e5f47; }
-
-.modal-header {
-  border-top-left-radius: 0.75rem !important;
-  border-top-right-radius: 0.75rem !important;
-}
-</style>
+<link rel="stylesheet" href="../assets/css/adoption_requests.css">
 </head>
 <body>
 
 <div class="sidebar">
-    <h2>SafePaws</h2> 
+    <h2>SafePaws</h2>
     <nav class="nav flex-column text-start w-100">
       <a href="admin_dashboard.php" class="nav-link"><i class="bi bi-house-door me-2"></i> Dashboard</a>
       <a href="manage_pets.php" class="nav-link"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
@@ -200,15 +168,15 @@ tbody tr:hover { background-color:#f1edea; transition:0.2s; }
 
 <div class="topbar">
   <i id="profileBtn" class="bi bi-person-circle"></i>
-    <div id="profileDropdown" class="profile-dropdown">
+  <div id="profileDropdown" class="profile-dropdown">
       <a href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal" class="view-profile-link"><i class="bi bi-person"></i> View Profile</a>
       <hr class="m-0">
       <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal" id="dropdownLogoutLink"><i class="bi bi-box-arrow-right"></i> Logout</a>
-    </div>
+  </div>
 </div>
 
 <div class="main-content">
-<h3 class="fw-bold mb-4" style="color:#A9745B;">🐾 Adoption Requests</h3>
+<h3 class="fw-bold mb-4" style="color:#A9745B;">Adoption Requests</h3>
 
 <?php if ($message): // Display flash message if session message exists ?>
     <div class="alert alert-<?php echo htmlspecialchars($message_type); ?> alert-dismissible fade show" role="alert">

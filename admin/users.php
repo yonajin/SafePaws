@@ -255,7 +255,7 @@ tbody tr:hover { background-color:#f1edea; transition:0.2s; }
 <div class="main-content">
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold m-0" style="color:#A9745B;">👥 User Management</h3>
+    <h3 class="fw-bold m-0" style="color:#A9745B;">User Management</h3>
     
     <form method="GET" action="users.php" class="input-group" style="max-width: 400px;">
         <input type="text" name="search" class="form-control" placeholder="Search by ID, Name, or Email" value="<?php echo htmlspecialchars($search_term); ?>">

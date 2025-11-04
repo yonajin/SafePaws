@@ -3,6 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+
 if (!isset($conn)) {
     include(__DIR__ . '/../config/db.php');
 }
@@ -13,12 +14,14 @@ $sql = "SELECT id, name, content, image_url, date_published
         FROM care_tips 
         WHERE status = 'Published' 
         ORDER BY date_published DESC";
+
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
     die("Database query failed: " . mysqli_error($conn));
 }
 $icon_class = "bi bi-heart-fill";
+
 ?>
 
 <!DOCTYPE html>
@@ -50,12 +53,14 @@ $icon_class = "bi bi-heart-fill";
     .navbar .nav-link:hover,
     .navbar .navbar-brand:hover {
       color: #ffe6d5 !important;
+      color: #ffe6d5 !important; /* optional hover color */
     }
 
     .navbar-brand {
       font-family: 'Quicksand', sans-serif;
       color: #FFF8F3 !important;
       font-weight: 700;
+      font-weight: 700; /* optional, makes it bolder */
       font-size: 40px;
     }
 
@@ -67,11 +72,50 @@ $icon_class = "bi bi-heart-fill";
       margin-left: 20px;
     }
 
+    
+    .hero {
+      background-image: url("../assets/images/dogcat.webp");
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      height: 700px;
+      color: #FFF8F3;
+      
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start; 
+      text-align: left;        
+      padding-left: 100px;     
+    }
+
+    .hero h1 {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 50px;
+    }
+    .hero p {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .hero button {
+      background-color: #FFB6A0;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      border: none;
+      color: #0A0000;
+      width: 175px;
+    }
     .section-title {
       font-weight: 600;
       margin-bottom: 20px;
     }
 
+    .about-img {
+      width: 100%;
+      border-radius: 10px;
+    }
     footer {
       background: #f1ece9;
       text-align: center;
@@ -88,6 +132,7 @@ $icon_class = "bi bi-heart-fill";
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         transition: transform 0.3s ease;
         height: 100%;
+        height: 100%; /* Ensures all cards in a row are the same height */
     }
     .tip-card:hover {
         transform: translateY(-5px);
@@ -111,6 +156,9 @@ $icon_class = "bi bi-heart-fill";
         font-size: 0.95rem;
         display: -webkit-box;
         -webkit-line-clamp: 3;
+        /* Truncate content after a few lines */
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Show up to 3 lines */
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -126,6 +174,7 @@ $icon_class = "bi bi-heart-fill";
         background-color: #ff997a;
         color: #0A0000;
     }
+
     </style>
 </head>
 <body>
@@ -144,6 +193,9 @@ $icon_class = "bi bi-heart-fill";
             <?php while ($tip = mysqli_fetch_assoc($result)): 
                 // Determine the image path
                 $image_path = !empty($tip['image_url']) ? "uploads/" . htmlspecialchars($tip['image_url']) : "assets/images/default-tip.webp";
+$image_path = !empty($tip['image_url']) 
+  ? "../assets/images/" . htmlspecialchars($tip['image_url']) 
+  : "../assets/images/default-tip.webp";
             ?>
             <div class="col d-flex">
                 <div class="card tip-card flex-fill">
@@ -192,6 +244,7 @@ $icon_class = "bi bi-heart-fill";
 </div>
 
 <?php include(__DIR__ . '/../includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -200,6 +253,9 @@ const tipModalElement = document.getElementById('tipModal');
 if (tipModalElement) {
     tipModalElement.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget;
+        const button = event.relatedTarget; // Button that triggered the modal
+        
+        // Retrieve data from the button's data attributes
         const title = button.getAttribute('data-title');
         const content = button.getAttribute('data-content');
         const image = button.getAttribute('data-image');
@@ -207,11 +263,17 @@ if (tipModalElement) {
 
         document.getElementById('modalTipTitle').textContent = title;
         document.getElementById('modalTipContent').innerHTML = content.replace(/\n/g, '<br>');
+        // Update the modal's elements
+        document.getElementById('modalTipTitle').textContent = title;
+        document.getElementById('modalTipContent').innerHTML = content.replace(/\n/g, '<br>'); // Format content
         document.getElementById('modalTipImage').src = image;
         document.getElementById('modalTipPublished').textContent = published;
     });
 }
 </script>
 
+// === END JAVASCRIPT ===
+</script>
+    
 </body>
 </html>

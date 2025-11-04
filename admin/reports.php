@@ -200,69 +200,35 @@ if ($stmt) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    /* Consistent Styles */
-    body { font-family: 'Poppins', sans-serif; background-color: #FFF8F3; padding: 15px; }
-    .sidebar { height: calc(100vh - 30px); width: 240px; background-color: #fff; border-right:1px solid #ddd; position: fixed; top:15px; left:25px; display:flex; flex-direction: column; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-radius:12px; padding:25px 0; }
-    .sidebar h2 { font-family: 'Quicksand', sans-serif; color:#A9745B; font-weight:700; font-size:28px; margin-bottom:25px; }
-    .sidebar .nav { width:100%; }
-    .sidebar .nav-link { color:#333; font-weight:500; padding:12px 19px; display:block; border-radius:8px; margin:2px 10px; transition:0.3s; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color:#f0e1d8; color:#A9745B; }
-    .topbar { background-color:#A9745B; height:60px; display:flex; justify-content:flex-end; align-items:center; padding:0 30px; color:white; margin-left:288px; margin-right:23px; border-radius:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1); position:relative; }
-    .main-content { margin-left:260px; padding:30px; margin-top:20px; }
-    .profile-dropdown { position: absolute; top: 60px; right: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; width: 200px; z-index: 999; }
-    .profile-dropdown a { display:block; padding:10px 15px; text-decoration:none; color:#333; }
-    .profile-dropdown a:hover { background:#f8f8f8; }
 
-    /* Card and Button Styles */
-    .card { border: none; border-radius: 10px; }
-    .card-header-main { background-color:#f0e1d8; color:#A9745B; border-bottom: none; font-weight: 700; font-size: 1.1em;}
-    .card-body h4 { font-weight: 700; color: #333; }
-    .card-body h5 { color: #A9745B; font-weight: 600; font-size: 1em; }
-    
-    .btn-generate { background-color: #A9745B; color: white; }
-    .btn-generate:hover { background-color: #8e5f47; }
-    .btn-save { background-color: #A9745B; color: white; }
-    .btn-save:hover { background-color: #8e5f47; }
-    
-    /* Table Styles */
-    table { border-collapse: collapse; width: 100%; border-radius: 10px; overflow: hidden; }
-    thead tr { background-color: #f0e1d8; color: #A9745B; }
-    tbody tr:nth-child(even) { background-color: #fdf7f3; }
-    tbody tr:nth-child(odd) { background-color: #ffffff; }
+  <link rel="stylesheet" href="../assets/css/reports.css">
 
-    /* Modal Corners (Consistent) */
-    .modal-header {
-      border-top-left-radius: 0.75rem !important;
-      border-top-right-radius: 0.75rem !important;
-    }
-  </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <h2>SafePaws</h2>
-  <nav class="nav flex-column">
-    <a href="admin_dashboard.php" class="nav-link"><i class="bi bi-house-door me-2"></i> Dashboard</a>
-    <a href="manage_pets.php" class="nav-link"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
-    <a href="adoption_requests.php" class="nav-link"><i class="bi bi-envelope-check me-2"></i> Adoption Requests</a>
-    <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
-    <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
-    <a href="reports.php" class="nav-link active"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
-  </nav>
+    <h2>SafePaws</h2>
+    <nav class="nav flex-column text-start w-100">
+      <a href="admin_dashboard.php" class="nav-link"><i class="bi bi-house-door me-2"></i> Dashboard</a>
+      <a href="manage_pets.php" class="nav-link"><i class="bi bi-box-seam me-2"></i> Manage Pets</a>
+      <a href="adoption_requests.php" class="nav-link"><i class="bi bi-envelope-check me-2"></i> Adoption Requests</a>
+      <a href="care_tips.php" class="nav-link"><i class="bi bi-book me-2"></i> Care Tips</a>
+      <a href="users.php" class="nav-link"><i class="bi bi-people me-2"></i> Users</a>
+      <a href="reports.php" class="nav-link active"><i class="bi bi-bar-chart-line me-2"></i> Reports</a>
+    </nav>
 </div>
 
 <div class="topbar">
   <i id="profileBtn" class="bi bi-person-circle"></i>
-    <div id="profileDropdown" class="profile-dropdown">
+  <div id="profileDropdown" class="profile-dropdown">
       <a href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal" class="view-profile-link"><i class="bi bi-person"></i> View Profile</a>
       <hr class="m-0">
       <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal" id="dropdownLogoutLink"><i class="bi bi-box-arrow-right"></i> Logout</a>
-    </div>
+  </div>
 </div>
 
 <div class="main-content">
-  <h3 class="fw-bold mb-4" style="color:#A9745B;">📊 Reports & Analytics</h3>
+  <h3 class="fw-bold mb-4" style="color:#A9745B;">Reports & Analytics</h3>
 
   <?php if ($message): // Display alert message if session message exists ?>
     <div class="alert alert-<?php echo htmlspecialchars($message_type); ?> alert-dismissible fade show" role="alert">
@@ -274,32 +240,32 @@ if ($stmt) {
   <h5 class="fw-bold mb-3" style="color:#A9745B;">Global Overview (All Time)</h5>
   <div class="row g-3 mb-4">
     <div class="col-md-3">
-      <div class="card shadow-sm p-3 text-center">
+      <div class="card-global shadow-sm p-3 text-center">
         <h5 class="text-muted">Total Pets</h5>
         <h4><i class="bi bi-box-seam me-1"></i> <?= $total_pets ?></h4>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card shadow-sm p-3 text-center">
+      <div class="card-global shadow-sm p-3 text-center">
         <h5 class="text-muted">Total Users</h5>
         <h4><i class="bi bi-people me-1"></i> <?= $total_users ?></h4>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card shadow-sm p-3 text-center">
+      <div class="card-global shadow-sm p-3 text-center">
         <h5 class="text-muted">Total Requests</h5>
         <h4><i class="bi bi-clipboard-data me-1"></i> <?= $total_requests ?></h4>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card shadow-sm p-3 text-center">
+      <div class="card-global shadow-sm p-3 text-center">
         <h5 class="text-muted">Successful Adoptions</h5>
         <h4><i class="bi bi-house-door-fill me-1" style="color:#8BC34A;"></i> <?= $all_time_approved ?></h4>
       </div>
     </div>
   </div>
 
-  <h5 class="fw-bold mb-3 mt-4" style="color:#A9745B;">Adoption Activity Filter</h5>
+  <h5 class="fw-bold mb-4 mt-4" style="color:#A9745B;">Adoption Activity Filter</h5>
   <form method="GET" class="row g-3 mb-4 card p-3 shadow-sm align-items-end">
 
     <div class="col-md-8">
