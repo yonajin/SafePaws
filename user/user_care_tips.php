@@ -192,10 +192,10 @@ $icon_class = "bi bi-heart-fill";
             
             <?php while ($tip = mysqli_fetch_assoc($result)): 
                 // Determine the image path
-                $image_path = !empty($tip['image_url']) ? "uploads/" . htmlspecialchars($tip['image_url']) : "assets/images/default-tip.webp";
 $image_path = !empty($tip['image_url']) 
-  ? "../assets/images/" . htmlspecialchars($tip['image_url']) 
-  : "../assets/images/default-tip.webp";
+  ? "assets/images/" . htmlspecialchars($tip['image_url']) 
+  : "/assets/images/default-tip.webp";
+
             ?>
             <div class="col d-flex">
                 <div class="card tip-card flex-fill">
@@ -244,7 +244,6 @@ $image_path = !empty($tip['image_url'])
 </div>
 
 <?php include(__DIR__ . '/../includes/footer.php'); ?>
-<?php include('../includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -252,7 +251,6 @@ $image_path = !empty($tip['image_url'])
 const tipModalElement = document.getElementById('tipModal');
 if (tipModalElement) {
     tipModalElement.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
         const button = event.relatedTarget; // Button that triggered the modal
         
         // Retrieve data from the button's data attributes
@@ -261,8 +259,6 @@ if (tipModalElement) {
         const image = button.getAttribute('data-image');
         const published = button.getAttribute('data-published');
 
-        document.getElementById('modalTipTitle').textContent = title;
-        document.getElementById('modalTipContent').innerHTML = content.replace(/\n/g, '<br>');
         // Update the modal's elements
         document.getElementById('modalTipTitle').textContent = title;
         document.getElementById('modalTipContent').innerHTML = content.replace(/\n/g, '<br>'); // Format content
@@ -270,8 +266,6 @@ if (tipModalElement) {
         document.getElementById('modalTipPublished').textContent = published;
     });
 }
-</script>
-
 // === END JAVASCRIPT ===
 </script>
     
