@@ -21,7 +21,9 @@ $sql = "
         CONCAT(ar.first_name, ' ', ar.last_name) AS full_name,
         ar.classification,
         ar.status,
-        ar.request_date
+        ar.request_date,
+        ar.interview_date,
+        ar.interview_type
     FROM adoption_requests ar
     WHERE ar.user_id = '$user_id'
     ORDER BY ar.request_date DESC
@@ -77,6 +79,7 @@ $result = mysqli_query($conn, $sql); //
             <th>Classification</th>
             <th>Status</th>
             <th>Date Requested</th>
+            <th>Interview Schedule</th>
           </tr>
         </thead>
         <tbody>
@@ -90,14 +93,29 @@ $result = mysqli_query($conn, $sql); //
                   else $statusClass = 'status-denied';
 
                   echo "<tr>
-                      <td>{$i}</td>
-                      <td>{$row['pet_id']}</td>
-                      <td>{$row['pet_name']}</td>
-                      <td>{$row['full_name']}</td>
-                      <td>{$row['classification']}</td>
-                      <td><span class='{$statusClass}'>{$row['status']}</span></td>
-                      <td>" . date('F j, Y g:i A', strtotime($row['request_date'])) . "</td>
-                  </tr>";
+    <td>{$i}</td>
+    <td>{$row['pet_id']}</td>
+    <td>{$row['pet_name']}</td>
+    <td>{$row['full_name']}</td>
+    <td>{$row['classification']}</td>
+    <td><span class='{$statusClass}'>{$row['status']}</span></td>
+    <td>" . date('F j, Y g:i A', strtotime($row['request_date'])) . "</td>
+    <td>";
+
+    if ($row['status'] == 'Approved' && !empty($row['interview_date'])) {
+        echo "<span class='text-success'>
+                " . date('F j, Y g:i A', strtotime($row['interview_date'])) . 
+                " ({$row['interview_type']})
+              </span>";
+    } elseif ($row['status'] == 'Approved') {
+        echo "<span class='text-muted'>Pending schedule</span>";
+    } else {
+        echo "<span class='text-muted'>N/A</span>";
+    }
+
+echo "</td>
+</tr>";
+
                   $i++;
               }
           } else {

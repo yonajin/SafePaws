@@ -305,6 +305,41 @@ if(mysqli_num_rows($result) > 0){
     </div>
 </div>
 
+<!-- 🗓️ Schedule Interview Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header" style="background-color:#A9745B;color:white;">
+        <h5 class="modal-title">Schedule Interview</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body bg-light">
+          <input type="hidden" name="request_id" id="scheduleRequestId">
+          <div class="mb-3">
+            <label for="interview_date" class="form-label fw-semibold">Interview Date & Time</label>
+            <input type="datetime-local" class="form-control" name="interview_date" id="interview_date" required>
+          </div>
+          <div class="mb-3">
+            <label for="interview_type" class="form-label fw-semibold">Interview Type</label>
+            <select name="interview_type" id="interview_type" class="form-select" required>
+              <option value="">Select Type</option>
+              <option value="Online">Online</option>
+              <option value="Onsite">Onsite</option>
+            </select>
+          </div>
+          <p class="text-muted small">Once approved, the adopter will be notified about their interview schedule.</p>
+        </div>
+        <div class="modal-footer bg-white d-flex justify-content-end align-items-center">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" name="schedule_interview" class="btn btn-success px-4">Save & Approve</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 <div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -348,6 +383,17 @@ if(mysqli_num_rows($result) > 0){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+
+    // Schedule Modal Logic
+const scheduleModal = document.getElementById('scheduleModal');
+if (scheduleModal) {
+  scheduleModal.addEventListener('show.bs.modal', function(event) {
+    const button = event.relatedTarget;
+    const requestId = button.getAttribute('data-id');
+    document.getElementById('scheduleRequestId').value = requestId;
+  });
+}
+
     
     // Profile Dropdown Logic (Functional)
     const profileBtn = document.getElementById("profileBtn");
